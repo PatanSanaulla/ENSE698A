@@ -28,6 +28,7 @@ try:
     import time
     from time import sleep
     import numpy as np
+    import cv2
 
 except:
     print ('--------------------------------------------------------------')
@@ -87,9 +88,11 @@ if clientID != -1:
     t0 = time.time()
     t = time.time()-t0
     k=0
-    while (k<len(wpt)):
+    while (k<1):
+    # while (k<len(wpt)):
         (ret, quad_handle) = vrep.simxGetObjectHandle(clientID,'Quadricopter_base',vrep.simx_opmode_oneshot)
         (ret, target_handle) = vrep.simxGetObjectHandle(clientID, 'Quadricopter_target', vrep.simx_opmode_oneshot)
+        (ret, camera_handle) = vrep.simxGetObjectHandle(clientID, 'FPV_Camera', vrep.simx_opmode_oneshot)
 
         # vrep.simxAddStatusbarMessage(clientID,repr(time.time()),vrep.simx_opmode_oneshot)
 
@@ -103,8 +106,13 @@ if clientID != -1:
         vrep.simxSetObjectPosition(clientID,target_handle,-1,wpt[k],vrep.simx_opmode_oneshot)
 
         if (np.linalg.norm(np.subtract(pos,np.asarray(wpt[k]))) < acceptance_radius):
+            # waypoint complete
             # print(np.linalg.norm(np.subtract(pos,np.asarray(wpt[k]))))
             k=k+1
+        else:
+            # do mapping
+            (ret, reso, raw_image) = vrep.simxGetVisionSensorImage(clientID, camera_handle, -1,vrep.simx_opmode_oneshot)
+            gray_image = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
 
         time.sleep(.1)
         t = time.time() - t0
