@@ -20,7 +20,7 @@ h = 5
 acceptance_radius = .5
 V = .1
 
-
+import cv2
 try:
     import vrep
     import sys
@@ -28,7 +28,7 @@ try:
     import time
     from time import sleep
     import numpy as np
-    import cv2
+
 
 except:
     print ('--------------------------------------------------------------')
@@ -81,18 +81,18 @@ if clientID != -1:
     wpt[k] = (start[0], start[1], h)
     wpt[k+1] = (start[0], start[1], 0)
 
-    print(N_cov)
-    print(len(wpt))
-    print(wpt)
+    # print(N_cov)
+    # print(len(wpt))
+    # print(wpt)
 
     t0 = time.time()
     t = time.time()-t0
     k=0
-    while (k<1):
+    while (k < 3):
     # while (k<len(wpt)):
         (ret, quad_handle) = vrep.simxGetObjectHandle(clientID,'Quadricopter_base',vrep.simx_opmode_oneshot)
         (ret, target_handle) = vrep.simxGetObjectHandle(clientID, 'Quadricopter_target', vrep.simx_opmode_oneshot)
-        (ret, camera_handle) = vrep.simxGetObjectHandle(clientID, 'FPV_Camera', vrep.simx_opmode_oneshot)
+        (ret, camera_handle) = vrep.simxGetObjectHandle(clientID, 'FPV_Camera', vrep.simx_opmode_oneshot_wait)
 
         # vrep.simxAddStatusbarMessage(clientID,repr(time.time()),vrep.simx_opmode_oneshot)
 
@@ -111,10 +111,17 @@ if clientID != -1:
             k=k+1
         else:
             # do mapping
-            (ret, reso, raw_image) = vrep.simxGetVisionSensorImage(clientID, camera_handle, -1,vrep.simx_opmode_oneshot)
-            gray_image = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
+            (ret, reso, raw_image) = vrep.simxGetVisionSensorImage(clientID, camera_handle, 0,vrep.simx_opmode_streaming)
+            raw_image = np.array(raw_image,dtype=np.uint8)
+            # print(raw_image)
+            if (len(raw_image)!=0):
+                raw_image = np.reshape(raw_image,np.append(reso,3))
+                # print(raw_image)
+                # gray_image = cv2.cvtColor(raw_image, cv2.COLOR_BGR2GRAY)
+                cv2.imshow("image", raw_image)
+                cv2.waitKey(1)
 
-        time.sleep(.1)
+        time.sleep(.01)
         t = time.time() - t0
 
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
