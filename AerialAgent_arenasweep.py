@@ -10,14 +10,14 @@
 # should be a corresponding call to simxFinish at the end!
 
 
-start = (0,0)
-arena_1Q = (10,10)
-arena_2Q = (-10,10)
-arena_3Q = (-10,-10)
-arena_4Q = (10,-10)
+start = (-5,50)
+arena_1Q = (100,100)
+arena_2Q = (0,100)
+arena_3Q = (0,0)
+arena_4Q = (100,-0)
 fov = 120
-h = 1
-acceptance_radius = .2
+h = 5
+acceptance_radius = .5
 V = .1
 
 
@@ -60,23 +60,25 @@ if clientID != -1:
 
     cov = 2*h*np.tan(0.5*fov*(np.pi/180))
     N_cov = int(np.ceil((arena_4Q[0] - arena_3Q[0])/cov))
-    N_wpts = 2*N_cov+2
+    N_wpts = 2*N_cov+2+1
     wpt = [0 for x in range(N_wpts)]
-    i_cov = 1
+    i_cov = 0
     k=1
     wpt[0] = (start[0], start[1], h)
-    while(i_cov<=N_cov):
+    while(i_cov<N_cov):
 
         if (np.mod(i_cov,2)!=0):
-            wpt[k] = (arena_4Q[0]-i_cov*cov, arena_4Q[1]+cov, h)
-            wpt[k+1] = (arena_1Q[0]-i_cov*cov, arena_1Q[1]-cov, h)
+            wpt[k] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+0*0.5*cov, h)
+            wpt[k+1] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-0*0.5*cov, h)
         else:
-            wpt[k] = (arena_1Q[0]-i_cov*cov, arena_1Q[1]-cov, h)
-            wpt[k+1] = (arena_4Q[0]-i_cov*cov, arena_4Q[1]+cov, h)
+            wpt[k] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-0*0.5*cov, h)
+            wpt[k+1] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+0*0.5*cov, h)
 
         k=k+2
         i_cov = i_cov+1
+
     wpt[k] = (start[0], start[1], h)
+    wpt[k+1] = (start[0], start[1], 0)
 
     print(N_cov)
     print(len(wpt))
