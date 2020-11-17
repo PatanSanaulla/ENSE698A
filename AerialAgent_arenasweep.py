@@ -168,6 +168,14 @@ if clientID != -1:
                     # # if (cam_start_x>0 and cam_start_y>0 and cam_end_x<1000 and cam_end_y<1000):
                     # obs_map[cam_start_y:cam_end_y,cam_start_x:cam_end_x] = cv2.resize(obs, (cam_len,cam_len), interpolation = cv2.INTER_AREA)
 
+                    # Erosion Dilation
+                    kernel = np.ones((2,2), np.uint8)
+                    obs_map = cv2.erode(obs_map, kernel, iterations=1)
+                    kernel = np.ones((2,2), np.uint8)
+                    obs_map = cv2.dilate(obs_map, kernel, iterations=1)
+
+                    cv2.imwrite('obs_map.png', obs_map)
+
                     cv2.imshow("image", obs_map)
                     cv2.waitKey(0)
                     k=k+1
