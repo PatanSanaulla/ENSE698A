@@ -16,8 +16,8 @@ arena_1Q = (100,100)
 arena_2Q = (0,100)
 arena_3Q = (0,0)
 arena_4Q = (100,-0)
-fov = 120
-h = 5
+fov = 45
+h = 15
 acceptance_radius = .5
 V = .1
 
@@ -73,11 +73,11 @@ if clientID != -1:
     while(i_cov<N_cov):
 
         if (np.mod(i_cov,2)!=0):
-            wpt[k] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+0*0.5*cov, h)
-            wpt[k+1] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-0*0.5*cov, h)
+            wpt[k] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+(-1)*0.5*cov, h)
+            wpt[k+1] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-(-1)*0.5*cov, h)
         else:
-            wpt[k] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-0*0.5*cov, h)
-            wpt[k+1] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+0*0.5*cov, h)
+            wpt[k] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-(-1)*0.5*cov, h)
+            wpt[k+1] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+(-1)*0.5*cov, h)
 
         k=k+2
         i_cov = i_cov+1
