@@ -92,7 +92,7 @@ if clientID != -1:
     t0 = time.time()
     t = time.time()-t0
     k=0
-    # while (k < 3):
+    # while (k < 1):
     while (k<len(wpt)):
         (ret, quad_handle) = vrep.simxGetObjectHandle(clientID,'Quadricopter_base',vrep.simx_opmode_oneshot)
         (ret, target_handle) = vrep.simxGetObjectHandle(clientID, 'Quadricopter_target', vrep.simx_opmode_oneshot)
@@ -184,8 +184,44 @@ if clientID != -1:
                 print(np.linalg.norm(np.subtract(pos,np.asarray(wpt[k]))))
                 k=k+1
 
+        if (k>1 and k<len(wpt)-1):
+            (ret, reso, raw_img) = vrep.simxGetVisionSensorImage(clientID, camera_handle, 0, vrep.simx_opmode_streaming)
+            raw_img = np.array(raw_img, dtype=np.uint8)
+            # print(raw_img)
+            if (len(raw_img) != 0):
+                raw_img = np.reshape(raw_img, np.append(reso, 3))
+                raw_img = cv2.resize(raw_img, (1000, 1000), interpolation=cv2.INTER_AREA)
+                raw_img = cv2.flip(raw_img, 0)  # vertical flip
+                # raw_img = cv2.cvtColor(raw_img, cv2.COLOR_RGB2HSV)
+
+                # obstacle 2 (Red)
+                lower = (200, 0, 0)  # lower threshhold values
+                upper = (255, 50, 50)  # upper threshhold values
+                objs = cv2.inRange(raw_img, lower, upper)
+
+                # Find contours and threshold on the area
+                contours, hierarchy = cv2.findContours(objs, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+                frame = np.zeros(shape=[1000, 1000, 1], dtype=np.uint8)
+                # frame = cv2.drawContours(frame, [contours[0]], 0, 255, 3)
+
+                for c in contours:
+                    if cv2.contourArea(c) < 25: #threshold for max contour area
+                        M = cv2.moments(c)
+                        if (M["m00"]!=0):
+                            cX = int(M["m10"] / M["m00"])
+                            cY = int(M["m01"] / M["m00"])
+                            if (cX>10 and cX<1000-10 and cY>10 and cY<1000-10):
+                                cv2.circle(raw_img, (cX, cY), 30, (255,0,0), 5)
+
+                debug_image = raw_img
+
+                cv2.imshow("image", debug_image)
+                cv2.waitKey(1)
+
         time.sleep(.01)
         t = time.time() - t0
+    #eow
 
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
     vrep.simxGetPingTime(clientID)
