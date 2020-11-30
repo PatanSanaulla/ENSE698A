@@ -155,26 +155,26 @@
       <screen x="1920" y="0" width="1536" height="824" />
     </state>
     <state x="2468" y="167" key="FileChooserDialogImpl/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1604716976064" />
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1605321116201">
+    <state width="1899" height="194" key="GridCell.Tab.0.bottom" timestamp="1606529569661">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="49" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1604717721750" />
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1605321116201" />
-    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1605321116201">
+    <state width="1899" height="194" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606529569661" />
+    <state width="1899" height="194" key="GridCell.Tab.0.center" timestamp="1606529569661">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="49" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1604717721750" />
-    <state width="1899" height="348" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1605321116201" />
-    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1605321116201">
+    <state width="1899" height="194" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606529569661" />
+    <state width="1899" height="194" key="GridCell.Tab.0.left" timestamp="1606529569661">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="49" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1604717721749" />
-    <state width="1899" height="348" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1605321116201" />
-    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1605321116201">
+    <state width="1899" height="194" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606529569661" />
+    <state width="1899" height="194" key="GridCell.Tab.0.right" timestamp="1606529569661">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="49" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1604717721750" />
-    <state width="1899" height="348" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1605321116201" />
+    <state width="1899" height="194" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606529569661" />
     <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1605321116201">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -195,9 +195,9 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="165" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1605307358604" />
-    <state x="571" y="146" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1605318000188">
+    <state x="571" y="146" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1605582834576">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="571" y="146" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1605318000188" />
+    <state x="571" y="146" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1920.1040@0.0.1920.1040" timestamp="1605582834576" />
   </component>
 </project>
