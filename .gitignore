@@ -1,2 +1,7 @@
 .idea
 __pycache__
+.idea/ENSE698A.iml
+.idea/ENSE698A.iml
+.idea/misc.xml
+__pycache__/vrep.cpython-37.pyc
+__pycache__/vrepConst.cpython-37.pyc
