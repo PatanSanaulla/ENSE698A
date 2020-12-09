@@ -12,7 +12,7 @@ MAX_X = 1000
 MAX_Y = 1000
 
 shared_map = cv.imread("mapping.png")
-shared_map = cv.flip(shared_map, 0)
+#shared_map = cv.flip(shared_map, 0)
 gray = cv.cvtColor(shared_map, cv.COLOR_BGR2GRAY)
 x, y,_  = shared_map.shape
 MAX_X = x
@@ -23,7 +23,7 @@ def isValidStep(position, clearance):
     posY = position[1]
     i = 0
     while(i <= clearance):
-        if gray[posX][posY] < 127 | gray[posX+i][posY] < 127 | gray[posX][posY+i] < 127 | gray[posX+i][posY+i] < 127:
+        if gray[posX][posY] > 127 or gray[posX+i][posY] > 127 or gray[posX][posY+i] > 127 or gray[posX+i][posY+i] > 127:
             return False
         i = i+1
 
@@ -37,10 +37,10 @@ def showPath(pathValues, Explored):
 
     for exp in Explored.keys():
         pos = exp.split(',')
-        cv.circle(shared_map, (int(pos[0]), int(pos[1])), 1, (255, 255, 0), 1)
+        cv.circle(shared_map, (int(pos[1]), int(pos[0])), 1, (255, 255, 0), 1)
 
     for pathpos in pathValues:
-        cv.circle(shared_map, (int(pathpos[0]), int(pathpos[1])), 1, (0, 0, 255), 1)
+        cv.circle(shared_map, (int(pathpos[1]), int(pathpos[0])), 1, (0, 0, 255), 1)
 
     cv.imshow("Map", shared_map)
     while (1):
