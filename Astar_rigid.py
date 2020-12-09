@@ -11,9 +11,7 @@ RADIUS = 1 # Radius of bot 0.263 m
 STEP_OBJECT_LIST = []
 SPEEDS = []
 COST_MAP_DICT = {}  # Index and Cost
-CLEARANCE = 5
-#r = 0.045  # Wheel radius 0.045 m                 # 0.038 3.8
-#L = 0.1608  # Wheel distance 0.1608 m                # 0.354 35.4
+CLEARANCE = 7
 
 
 # Definition of Class Step:
@@ -99,16 +97,9 @@ def inGoal(position):
     # def initiatePlanning(stpt, ftpt, clr):
 try:
     #startPoints = input("Enter the Start Points (x,y,theta) position: ")
-    START_POINT = [10,270,0]#[int(each) for each in startPoints.split(" ")]
+    START_POINT = [270,10,0]#[int(each) for each in startPoints.split(" ")]
     #goalPoints = input("Enter the Goal Points (x,y) position: ")
-    GOAL_POINT = [30,200]#[int(each) for each in goalPoints.split(" ")]
-    # rpm = input("Enter the RPM Values for the robot: ")
-    # RPM_LIST = [int(each) for each in rpm.split(" ")]  # NEED TO CHANGE IF THE RPM ARE FLOAT VALUES
-    rpm1 = 30  # RPM_LIST[0]/100
-    # rpm2 = RPM_LIST[1]/100
-    MOVES_LIST = [[0, rpm1], [rpm1, 0], [rpm1, rpm1]]  # [[0, rpm1], [rpm1, 0], [rpm1, rpm1], [0, rpm2], [rpm2, 0], [rpm2, rpm2], [rpm1, rpm2], [rpm2, rpm1]]
-    #CLEARANCE =   # int(input("Enter the Clearance of the robot: "))
-    print(MOVES_LIST)
+    GOAL_POINT = [200,180]#[int(each) for each in goalPoints.split(" ")]
 
 except:
     print("Please enter the proper points: Example: 200 30 30")
