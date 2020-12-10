@@ -9,18 +9,18 @@
 # IMPORTANT: for each successful call to simxStart, there
 # should be a corresponding call to simxFinish at the end!
 
-center = (50,50)
+center = (0,0)
 
-start = (-5,50)
-arena_1Q = (100,100)
-arena_2Q = (0,100)
-arena_3Q = (0,0)
-arena_4Q = (100,-0)
+start = (0,-45)
+arena_1Q = (50,-50)
+arena_2Q = (-50,-50)
+arena_3Q = (50,-50)
+arena_4Q = (50,50)
 fov = 45
 h = 15
 acceptance_radius = .5
 V = .1
-
+import numpy as np
 try:
     import vrep
     import sys
