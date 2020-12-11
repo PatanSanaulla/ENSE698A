@@ -20,7 +20,7 @@ fov = 45
 h = 15
 acceptance_radius = .5
 V = .1
-import numpy as np
+
 try:
     import vrep
     import sys
@@ -58,11 +58,14 @@ if clientID != -1:
     vrep.simxAddStatusbarMessage(clientID,'Sweep Start!',vrep.simx_opmode_oneshot) #This message should be printed on your CopelliaSim in the bottm
 
     obs_map = np.zeros(shape=[1000, 1000], dtype=np.uint8)
+    OBJS_X = []
+    OBJS_Y = []
+    flag_saved = False
 
     traj = start
 
     cov = 2*h*np.tan(0.5*fov*(np.pi/180.0))
-    N_cov = int(np.ceil((arena_4Q[0] - arena_3Q[0])/cov))
+    N_cov = int(np.floor((arena_4Q[0] - arena_3Q[0])/cov))
     N_wpts = 2*N_cov+2+2
     wpt = [0 for x in range(N_wpts)]
     i_cov = 0
@@ -95,7 +98,7 @@ if clientID != -1:
     # while (k < 1):
     while (1):
 
-        if (k>len(wpt)):
+        if (k>len(wpt)-1):
             break
 
         (ret, quad_handle) = vrep.simxGetObjectHandle(clientID,'Quadricopter_base',vrep.simx_opmode_oneshot)
@@ -162,9 +165,9 @@ if clientID != -1:
                     # obstacle 6 (Bluish green)
                     lower = (150, 150, 200)  # lower threshhold values
                     upper = (200, 255, 255)  # upper threshhold values
-                    obs_4 = cv2.inRange(raw_img, lower, upper)
+                    obs_6 = cv2.inRange(raw_img, lower, upper)
 
-                    obs_map = cv2.bitwise_or(obs_map, obs_4, mask=None)
+                    obs_map = cv2.bitwise_or(obs_map, obs_6, mask=None)
 
                     # quad_x_pos_in_img = min(max(((pos[0] - arena_3Q[0]) * int(1000 / 100)),0),1000)
                     # quad_y_pos_in_img = min(max((1000 - (pos[1] - arena_3Q[1]) * int(1000 / 100)),0),1000)
@@ -195,7 +198,8 @@ if clientID != -1:
                 print(np.linalg.norm(np.subtract(pos,np.asarray(wpt[k]))))
                 k=k+1
 
-        if (k>1 and k<len(wpt)-1):
+        if (k>2 and k<len(wpt)-2):
+            ## FIND OBJECTS LOACTION DURING ARENA SWEEP
             (ret, reso, raw_img) = vrep.simxGetVisionSensorImage(clientID, camera_handle, 0, vrep.simx_opmode_streaming)
             raw_img = np.array(raw_img, dtype=np.uint8)
             # print(raw_img)
@@ -205,10 +209,69 @@ if clientID != -1:
                 raw_img = cv2.flip(raw_img, 0)  # vertical flip
                 # raw_img = cv2.cvtColor(raw_img, cv2.COLOR_RGB2HSV)
 
-                # obstacle 2 (Red)
+                # obstacle 2 (Grey)
                 lower = (200, 0, 0)  # lower threshhold values
                 upper = (255, 50, 50)  # upper threshhold values
                 objs = cv2.inRange(raw_img, lower, upper)
+
+                # obstacle 1 (white)
+                lower = (225, 225, 225)  # lower threshhold values
+                upper = (255, 255, 255)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask = None)
+
+                # obstacle 2 (grey)
+                lower = (145, 145, 145)  # lower threshhold values
+                upper = (148, 148, 148)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask = None)
+
+                # obstacle 3 (Red)
+                lower = (200, 0, 0)  # lower threshhold values
+                upper = (255, 50, 50)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
+
+                # obstacle 3 (Pink)
+                lower = (200, 100, 250)  # lower threshhold values
+                upper = (255, 200, 255)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
+
+                # obstacle 4 (Green)
+                lower = (0, 200, 0)  # lower threshhold values
+                upper = (50, 255, 50)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
+
+                # obstacle 5 (Blue)
+                lower = (0, 0, 200)  # lower threshhold values
+                upper = (50, 50, 255)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
+
+                # obstacle 5 (Yellow)
+                lower = (220, 230, 160)  # lower threshhold values
+                upper = (230, 250, 170)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
+
+                # obstacle 5 (Bronze)
+                lower = (220, 160, 150)  # lower threshhold values
+                upper = (230, 200, 190)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
+
+                # cv2.imshow("image", objs)
+                # cv2.waitKey(1)
 
                 # Find contours and threshold on the area
                 contours, hierarchy = cv2.findContours(objs, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -224,11 +287,29 @@ if clientID != -1:
                             cY = int(M["m01"] / M["m00"])
                             if (cX>10 and cX<1000-10 and cY>10 and cY<1000-10):
                                 cv2.circle(raw_img, (cX, cY), 30, (255,0,0), 5)
+                                f = 500.0 / np.tan(0.5 * fov * (np.pi / 180.0))
+                                x_pos = ((cX - 500.0) / f) * (pos[2]) + pos[0]
+                                y_pos = (-(cY - 500.0) / f) * (pos[2]) + pos[1]
+                                # print(x_pos, y_pos)
+                                OBJS_X = np.append(OBJS_X, x_pos)
+                                OBJS_Y = np.append(OBJS_Y, y_pos)
+                                print(OBJS_X,OBJS_Y)
+                                # print(len(OBJS_X))
+                                # OBJS = np.asarray([OBJS_X,OBJS_Y])
+                                # # print(OBJS)
+                                # np.savetxt('OBJS.txt',np.transpose(OBJS))
 
                 debug_image = raw_img
 
                 cv2.imshow("image", debug_image)
                 cv2.waitKey(1)
+
+        if (k==len(wpt)-2 and flag_saved==False):
+            OBJS = np.asarray([OBJS_X, OBJS_Y])
+            print(OBJS)
+            np.savetxt('OBJS.txt', np.transpose(OBJS))
+            flag_saved=True
+            print("File SAVED !!!!!!!!!")
 
         time.sleep(.01)
         t = time.time() - t0
