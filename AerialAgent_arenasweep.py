@@ -191,7 +191,7 @@ if clientID != -1:
                     cv2.imwrite('obs_map.png', obs_map)
 
                     cv2.imshow("image", obs_map)
-                    cv2.waitKey(0)
+                    cv2.waitKey(1)
                     k=k+1
             else:
                 ## waypoint complete
@@ -285,15 +285,15 @@ if clientID != -1:
                         if (M["m00"]!=0):
                             cX = int(M["m10"] / M["m00"])
                             cY = int(M["m01"] / M["m00"])
-                            if (cX>10 and cX<1000-10 and cY>10 and cY<1000-10):
+                            if (cX>50 and cX<1000-50 and cY>300 and cY<1000-300):
                                 cv2.circle(raw_img, (cX, cY), 30, (255,0,0), 5)
                                 f = 500.0 / np.tan(0.5 * fov * (np.pi / 180.0))
-                                x_pos = ((cX - 500.0) / f) * (pos[2]) + pos[0]
-                                y_pos = (-(cY - 500.0) / f) * (pos[2]) + pos[1]
-                                # print(x_pos, y_pos)
+                                x_pos = ((cX - 500.0) / f) * (pos[2]-0.1) + pos[0]
+                                y_pos = (-(cY - 500.0) / f) * (pos[2]-0.1) + pos[1]
+                                print(x_pos, y_pos)
                                 OBJS_X = np.append(OBJS_X, x_pos)
                                 OBJS_Y = np.append(OBJS_Y, y_pos)
-                                print(OBJS_X,OBJS_Y)
+                                # print(OBJS_X,OBJS_Y)
                                 # print(len(OBJS_X))
                                 # OBJS = np.asarray([OBJS_X,OBJS_Y])
                                 # # print(OBJS)
