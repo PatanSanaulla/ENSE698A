@@ -12,10 +12,10 @@
 center = (0,0)
 
 start = (0,-45)
-arena_1Q = (50,-50)
-arena_2Q = (-50,-50)
-arena_3Q = (50,-50)
-arena_4Q = (50,50)
+arena_1Q = (50,50)
+arena_2Q = (-50,50)
+arena_3Q = (-50,-50)
+arena_4Q = (50,-50)
 fov = 45
 h = 15
 acceptance_radius = .5
@@ -93,7 +93,11 @@ if clientID != -1:
     t = time.time()-t0
     k=0
     # while (k < 1):
-    while (k<len(wpt)):
+    while (1):
+
+        if (k>len(wpt)):
+            break
+
         (ret, quad_handle) = vrep.simxGetObjectHandle(clientID,'Quadricopter_base',vrep.simx_opmode_oneshot)
         (ret, target_handle) = vrep.simxGetObjectHandle(clientID, 'Quadricopter_target', vrep.simx_opmode_oneshot)
         (ret, camera_handle) = vrep.simxGetObjectHandle(clientID, 'FPV_Camera', vrep.simx_opmode_oneshot_wait)
@@ -134,26 +138,33 @@ if clientID != -1:
 
                     obs_map = cv2.bitwise_or(obs_1, obs_2, mask = None)
 
-                    # obstacle 2 (Red)
+                    # obstacle 3 (Red)
                     lower = (200, 0, 0)  # lower threshhold values
                     upper = (255, 50, 50)  # upper threshhold values
                     obs_3 = cv2.inRange(raw_img, lower, upper)
 
                     obs_map = cv2.bitwise_or(obs_map, obs_3, mask=None)
 
-                    # obstacle 2 (Green)
+                    # obstacle 4 (Green)
                     lower = (0, 200, 0)  # lower threshhold values
                     upper = (50, 255, 50)  # upper threshhold values
                     obs_4 = cv2.inRange(raw_img, lower, upper)
 
                     obs_map = cv2.bitwise_or(obs_map, obs_4, mask=None)
 
-                    # obstacle 2 (Blue)
+                    # obstacle 5 (Blue)
                     lower = (0, 0, 200)  # lower threshhold values
                     upper = (50, 50, 255)  # upper threshhold values
                     obs_5 = cv2.inRange(raw_img, lower, upper)
 
                     obs_map = cv2.bitwise_or(obs_map, obs_5, mask=None)
+
+                    # obstacle 6 (Bluish green)
+                    lower = (150, 150, 200)  # lower threshhold values
+                    upper = (200, 255, 255)  # upper threshhold values
+                    obs_4 = cv2.inRange(raw_img, lower, upper)
+
+                    obs_map = cv2.bitwise_or(obs_map, obs_4, mask=None)
 
                     # quad_x_pos_in_img = min(max(((pos[0] - arena_3Q[0]) * int(1000 / 100)),0),1000)
                     # quad_y_pos_in_img = min(max((1000 - (pos[1] - arena_3Q[1]) * int(1000 / 100)),0),1000)
@@ -169,15 +180,15 @@ if clientID != -1:
                     # obs_map[cam_start_y:cam_end_y,cam_start_x:cam_end_x] = cv2.resize(obs, (cam_len,cam_len), interpolation = cv2.INTER_AREA)
 
                     # Erosion Dilation
-                    kernel = np.ones((2,2), np.uint8)
-                    obs_map = cv2.erode(obs_map, kernel, iterations=1)
+                    # kernel = np.ones((2,2), np.uint8)
+                    # obs_map = cv2.erode(obs_map, kernel, iterations=1)
                     kernel = np.ones((2,2), np.uint8)
                     obs_map = cv2.dilate(obs_map, kernel, iterations=1)
 
                     cv2.imwrite('obs_map.png', obs_map)
 
                     cv2.imshow("image", obs_map)
-                    cv2.waitKey(0)
+                    cv2.waitKey(1)
                     k=k+1
             else:
                 ## waypoint complete
