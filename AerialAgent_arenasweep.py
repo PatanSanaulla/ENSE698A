@@ -188,7 +188,7 @@ if clientID != -1:
                     cv2.imwrite('obs_map.png', obs_map)
 
                     cv2.imshow("image", obs_map)
-                    cv2.waitKey(1)
+                    cv2.waitKey(0)
                     k=k+1
             else:
                 ## waypoint complete
