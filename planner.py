@@ -57,8 +57,8 @@ class Planner:
 
             #print("Total Cost to reach the final Point:", poppedStep.costToCome)
 
-            print("total time for A star in seconds: ", end_time - start_time)
-            SPEEDS = self.backtrack(poppedStep)  # To show the backtrack on the graph
+            #print("total time for A star in seconds: ", end_time - start_time)
+            return(self.backtrack(poppedStep)) # To show the backtrack on the graph
 
         else:
             print("Exiting the Algorithm")
@@ -85,7 +85,7 @@ class Planner:
 
         cv.imshow("Map", self.obstacle_map)
         while (1):
-            key = cv.waitKey(10000) & 0xff
+            key = cv.waitKey(100) & 0xff
 
     def backtrack(self, stepObj):
         pathValues = []
@@ -98,8 +98,8 @@ class Planner:
 
         #print("length of step_object_list", len(self.STEP_OBJECT_LIST))
         #print("length of the pathvalues", len(pathValues))
-        print(pathValues)
-        self.showPath(pathValues, self.EXPLORED)
+        #print(pathValues)
+        #self.showPath(pathValues, self.EXPLORED)
         return pathValues
 
     def inGoal(self, position):

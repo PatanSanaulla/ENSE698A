@@ -4,6 +4,7 @@ try:
     import sys
     from threading import Thread
     import time
+    import math
     from time import sleep
 
 except:
@@ -15,18 +16,36 @@ except:
     print ('--------------------------------------------------------------')
     print ('')
 
-def sweepScanAerialAgent():
+GPS_Target = []
+GPS_GroundAgent = []
+ALL_PATHS = dict()
+TARGET_POINTS = []
+
+def getTargetPosition():
     while True:
-        return True
+        trgt = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking )
+        GPS_Target = [math.ceil(500 - (trgt[1][1]*(1000/100))), math.ceil(500 + (trgt[1][0]*(1000/100)))]
+
+def getGroundAgentPosition():
+    while True:
+        gndAgt = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )
+        GPS_GroundAgent = [math.ceil(500 - (gndAgt[1][1]*(1000/100))), math.ceil(500 + (gndAgt[1][0]*(1000/100)))]
 
 def astarAlgorithmRun():
-    # while True:
-    #     print("Running astar Active")
-    #points = [[450, 200], ]
-    #for i in points:
+    file = open('OBJS_easy.txt', 'r')
+    Lines = file.readlines()
+    #goalPoint = [980,500]
+    for line in Lines:
+        coordinates = [float(x) for x in line.split(" ")]
+        goalPoint = [math.ceil(500 - (coordinates[1]*(1000/100))), math.ceil(500 + (coordinates[0]*(1000/100)))]
+        astarPlanner = plnr.Planner(GPS_GroundAgent, goalPoint, "obs_map_easy.png")
+        path = astarPlanner.initiatePlanning()
+        ALL_PATHS[line] = path
+        del astarPlanner
 
-    astarPlanner = plnr.Planner([980,500], [450,290], "obs_map_easy.png")
-    astarPlanner.initiatePlanning()
+    minPath = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
+    TARGET_POINTS = ALL_PATHS[minPath]
+    print(minPath)
 
 
 vrep.simxFinish(-1) # just in case, close all opened connections
@@ -35,16 +54,52 @@ clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
 if clientID != -1:
     print('Connection Established to remote API server')
     # Now send some data to V-REP in a non-blocking fashion:
-    vrep.simxAddStatusbarMessage(clientID,'Conneted to Python Code base',vrep.simx_opmode_oneshot) #This message should be printed on your CopelliaSim in the bottm
+    vrep.simxAddStatusbarMessage(clientID,'Conneted to Python Code base',vrep.simx_opmode_oneshot)
+    #This message should be printed on your CopelliaSim in the bottm
 
+    returnCode, target = vrep.simxGetObjectHandle(clientID, 'GV_target', vrep.simx_opmode_oneshot_wait)
 
-    #main code to execute
-    #Threaded Function 1 to scan the environment with aerial agent
-    thread1 = Thread(target=sweepScanAerialAgent)
+    returnCode, groundAgent = vrep.simxGetObjectHandle(clientID, 'youBot', vrep.simx_opmode_oneshot_wait)
+
+    gndAgt = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking)
+    GPS_GroundAgent = [math.ceil(500 - (gndAgt[1][1] * (1000 / 100))), math.ceil(500 + (gndAgt[1][0] * (1000 / 100)))]
+
+    trgt = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking)
+    GPS_Target = [math.ceil(500 - (trgt[1][1] * (1000 / 100))), math.ceil(500 + (trgt[1][0] * (1000 / 100)))]
+
+    #Threaded Function to get the GPS value of the target position
+    thread1 = Thread(target=getTargetPosition)
     thread1.start()
-
-    thread2 = Thread(target=astarAlgorithmRun)
+    #Threaded Function to get the GPS value of the Ground agent position
+    thread2 = Thread(target=getGroundAgentPosition)
     thread2.start()
+
+    file = open('OBJS_easy.txt', 'r')
+    Lines = file.readlines()
+    # goalPoint = [980,500]
+    for line in Lines:
+        coordinates = [float(x) for x in line.split(" ")]
+        goalPoint = [math.ceil(500 - (coordinates[1] * (1000 / 100))), math.ceil(500 + (coordinates[0] * (1000 / 100)))]
+        astarPlanner = plnr.Planner(GPS_GroundAgent, goalPoint, "obs_map_easy.png")
+        path = astarPlanner.initiatePlanning()
+        ALL_PATHS[line] = path
+        del astarPlanner
+
+    minPath = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
+    TARGET_POINTS = ALL_PATHS[minPath]
+    print(minPath)
+
+    for pos in TARGET_POINTS:
+        if GPS_Target ==  pos:
+            continue
+        else:
+            x = (pos[1]-500)*(100/1000)
+            y = (-pos[0]+500)*(100/1000)
+            z = 0
+            vrep.simxSetObjectPosition(clientID, target, -1, [x, y, z], vrep.simx_opmode_blocking)
+            while True:
+                if vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking ) == vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking ):
+                    break
 
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
     #vrep.simxGetPingTime(clientID)
