@@ -20,9 +20,9 @@ def isValidStep(position, clearance):
 
 
 
-shared_map = cv.imread("mapping.png")
+shared_map = cv.imread("obs_map_easy.png")
 #shared_map = cv.flip(shared_map, 0)
-edited_map = cv.imread("mapping.png")
+edited_map = cv.imread("obs_map_easy.png")
 gray = cv.cvtColor(shared_map, cv.COLOR_BGR2GRAY)
 x, y,_  = shared_map.shape
 MAX_X = x
@@ -34,8 +34,8 @@ for i in range(0,MAX_X):
     for j in range(0, MAX_Y):
         if isValidStep([i,j],0) == True:
             cv.circle(edited_map, (j,i), 1, (0, 0, 255), 1)
-cv.circle(edited_map, (10,270), 1, (255, 0, 0), 7)
-cv.circle(edited_map, (180,200), 1, (255, 0, 0), 7)
+cv.circle(edited_map, (10,980), 1, (255, 0, 0), 7)
+cv.circle(edited_map, (500, 980), 1, (255, 0, 0), 7)
 cv.imshow("Map1", shared_map)
 cv.imshow("Map2", edited_map)
 while (1):
