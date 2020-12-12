@@ -26,13 +26,17 @@ def cluster(file):
     c = c[idx]
     
     print('Clustering...')
+    
     epsilon = 0.5
+    
     # Find euclidean distance between consecutive rows
     differences = np.diff(c, axis = 0, prepend = 0)
     euclidean_distance = np.linalg.norm(differences, axis=1)
+    
     # Gather first index of unique measurments
     unique_idx = np.arange(len(c))[euclidean_distance > epsilon]
     print(f"There are {len(unique_idx)} objects to be collected.")
+    
     # Average out values
     clustered = np.zeros(2)
     for i, idx in enumerate(unique_idx):
