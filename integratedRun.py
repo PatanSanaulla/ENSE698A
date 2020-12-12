@@ -4,6 +4,7 @@ try:
     import sys
     from threading import Thread
     import time
+    import math
     from time import sleep
 
 except:
@@ -20,13 +21,16 @@ def sweepScanAerialAgent():
         return True
 
 def astarAlgorithmRun():
-    # while True:
-    #     print("Running astar Active")
-    #points = [[450, 200], ]
-    #for i in points:
-
-    astarPlanner = plnr.Planner([980,500], [450,290], "obs_map_easy.png")
-    astarPlanner.initiatePlanning()
+    file = open('OBJS_easy.txt', 'r')
+    Lines = file.readlines()
+    goalPoint = [980,500]
+    for line in Lines:
+        coordinates = [float(x) for x in line.split(" ")]
+        goalPoint[0] = math.ceil(500 - (coordinates[1]*(1000/100)))
+        goalPoint[1] = math.ceil(500 + (coordinates[0]*(1000/100)))
+        astarPlanner = plnr.Planner([980,500], goalPoint, "obs_map_easy.png")
+        path = astarPlanner.initiatePlanning()
+        del astarPlanner
 
 
 vrep.simxFinish(-1) # just in case, close all opened connections
