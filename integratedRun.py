@@ -23,29 +23,30 @@ TARGET_POINTS = []
 
 def getTargetPosition():
     while True:
-        trgt = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking )
-        GPS_Target = [math.ceil(500 - (trgt[1][1]*(1000/100))), math.ceil(500 + (trgt[1][0]*(1000/100)))]
+        try:
+            trgt = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking )
+            GPS_Target = convertToPxlCoord(trgt[1])
+        except ValueError:
+            continue
+
 
 def getGroundAgentPosition():
     while True:
-        gndAgt = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )
-        GPS_GroundAgent = [math.ceil(500 - (gndAgt[1][1]*(1000/100))), math.ceil(500 + (gndAgt[1][0]*(1000/100)))]
+        try:
+            gndAgt = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )
+            GPS_GroundAgent = convertToPxlCoord(gndAgt[1])
+        except ValueError:
+            continue
 
-def astarAlgorithmRun():
-    file = open('OBJS_easy.txt', 'r')
-    Lines = file.readlines()
-    #goalPoint = [980,500]
-    for line in Lines:
-        coordinates = [float(x) for x in line.split(" ")]
-        goalPoint = [math.ceil(500 - (coordinates[1]*(1000/100))), math.ceil(500 + (coordinates[0]*(1000/100)))]
-        astarPlanner = plnr.Planner(GPS_GroundAgent, goalPoint, "obs_map_easy.png")
-        path = astarPlanner.initiatePlanning()
-        ALL_PATHS[line] = path
-        del astarPlanner
+def compareTargetAndGA():
+    print("current GroundAgent at: "+str(GPS_GroundAgent)+" and Target at: "+str(GPS_Target))
+    if GPS_GroundAgent == GPS_Target or GPS_GroundAgent == [GPS_Target[0], GPS_Target[1]+1] or GPS_GroundAgent == [GPS_Target[0]+1, GPS_Target[1]]:
+        return True
+    else:
+        return False
 
-    minPath = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
-    TARGET_POINTS = ALL_PATHS[minPath]
-    print(minPath)
+def convertToPxlCoord(vrepCoord):
+    return [math.ceil(500 - (vrepCoord[1]*(1000/100))), math.ceil(500 + (vrepCoord[0]*(1000/100)))]
 
 
 vrep.simxFinish(-1) # just in case, close all opened connections
@@ -62,10 +63,10 @@ if clientID != -1:
     returnCode, groundAgent = vrep.simxGetObjectHandle(clientID, 'youBot', vrep.simx_opmode_oneshot_wait)
 
     gndAgt = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking)
-    GPS_GroundAgent = [math.ceil(500 - (gndAgt[1][1] * (1000 / 100))), math.ceil(500 + (gndAgt[1][0] * (1000 / 100)))]
+    GPS_GroundAgent = convertToPxlCoord(gndAgt[1])
 
     trgt = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking)
-    GPS_Target = [math.ceil(500 - (trgt[1][1] * (1000 / 100))), math.ceil(500 + (trgt[1][0] * (1000 / 100)))]
+    GPS_Target = convertToPxlCoord(trgt[1])
 
     #Threaded Function to get the GPS value of the target position
     thread1 = Thread(target=getTargetPosition)
@@ -76,10 +77,9 @@ if clientID != -1:
 
     file = open('OBJS_easy.txt', 'r')
     Lines = file.readlines()
-    # goalPoint = [980,500]
     for line in Lines:
         coordinates = [float(x) for x in line.split(" ")]
-        goalPoint = [math.ceil(500 - (coordinates[1] * (1000 / 100))), math.ceil(500 + (coordinates[0] * (1000 / 100)))]
+        goalPoint = convertToPxlCoord(coordinates)
         astarPlanner = plnr.Planner(GPS_GroundAgent, goalPoint, "obs_map_easy.png")
         path = astarPlanner.initiatePlanning()
         ALL_PATHS[line] = path
@@ -87,7 +87,9 @@ if clientID != -1:
 
     minPath = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
     TARGET_POINTS = ALL_PATHS[minPath]
+    print("Found the Closest object")
     print(minPath)
+    print(TARGET_POINTS)
 
     for pos in TARGET_POINTS:
         if GPS_Target ==  pos:
@@ -97,6 +99,7 @@ if clientID != -1:
             y = (-pos[0]+500)*(100/1000)
             z = 0
             vrep.simxSetObjectPosition(clientID, target, -1, [x, y, z], vrep.simx_opmode_blocking)
+            #sleep(0.5)
             while True:
                 if vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking ) == vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking ):
                     break
