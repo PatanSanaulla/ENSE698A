@@ -39,11 +39,13 @@ def getGroundAgentPosition():
             continue
 
 def compareTargetAndGA():
-    print("current GroundAgent at: "+str(GPS_GroundAgent)+" and Target at: "+str(GPS_Target))
-    if GPS_GroundAgent == GPS_Target or GPS_GroundAgent == [GPS_Target[0], GPS_Target[1]+1] or GPS_GroundAgent == [GPS_Target[0]+1, GPS_Target[1]]:
+    Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking )[1]
+    Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )[1]
+    if ((Gx - Tx) ** 2 + (Gy - Ty) ** 2 <= (0.5) ** 2): #radius of 10Cms
         return True
     else:
         return False
+
 
 def convertToPxlCoord(vrepCoord):
     return [math.ceil(500 - (vrepCoord[1]*(1000/100))), math.ceil(500 + (vrepCoord[0]*(1000/100)))]
@@ -55,7 +57,7 @@ clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
 if clientID != -1:
     print('Connection Established to remote API server')
     # Now send some data to V-REP in a non-blocking fashion:
-    vrep.simxAddStatusbarMessage(clientID,'Conneted to Python Code base',vrep.simx_opmode_oneshot)
+    vrep.simxAddStatusbarMessage(clientID,'Connected to Python Code base',vrep.simx_opmode_oneshot)
     #This message should be printed on your CopelliaSim in the bottm
 
     returnCode, target = vrep.simxGetObjectHandle(clientID, 'GV_target', vrep.simx_opmode_oneshot_wait)
@@ -77,6 +79,7 @@ if clientID != -1:
 
     file = open('OBJS_easy.txt', 'r')
     Lines = file.readlines()
+    vrep.simxAddStatusbarMessage(clientID, 'Planning ... ', vrep.simx_opmode_oneshot)
     for line in Lines:
         coordinates = [float(x) for x in line.split(" ")]
         goalPoint = convertToPxlCoord(coordinates)
@@ -87,23 +90,22 @@ if clientID != -1:
 
     minPath = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
     TARGET_POINTS = ALL_PATHS[minPath]
-    print("Found the Closest object")
+    vrep.simxAddStatusbarMessage(clientID,'Found the Closest object',vrep.simx_opmode_oneshot)
     print(minPath)
     print(TARGET_POINTS)
 
-    for pos in TARGET_POINTS:
-        if GPS_Target ==  pos:
+    for i in range(0, len(TARGET_POINTS), 1):
+        if GPS_Target ==  TARGET_POINTS[i]:
             continue
         else:
-            x = (pos[1]-500)*(100/1000)
-            y = (-pos[0]+500)*(100/1000)
+            x = (TARGET_POINTS[i][1]-500)*(100/1000)
+            y = (-TARGET_POINTS[i][0]+500)*(100/1000)
             z = 0
             vrep.simxSetObjectPosition(clientID, target, -1, [x, y, z], vrep.simx_opmode_blocking)
-            #sleep(0.5)
             while True:
-                if vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking ) == vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking ):
+                if compareTargetAndGA() == True:
                     break
-
+    vrep.simxAddStatusbarMessage(clientID,'Reached the object!!',vrep.simx_opmode_oneshot)
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
     #vrep.simxGetPingTime(clientID)
 
