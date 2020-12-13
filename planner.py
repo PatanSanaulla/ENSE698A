@@ -62,7 +62,8 @@ class Planner:
 
         else:
             print("Exiting the Algorithm")
-            sys.exit(0)
+            return([])
+            #sys.exit(0)
 
     def isValidStep(self, position, clearance):
         posX = position[0]
