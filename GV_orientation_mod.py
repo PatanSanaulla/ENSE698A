@@ -101,21 +101,25 @@ if clientID != -1:
 
                 else:
                     break
-                cX_avg = cX_avg / (len(contours) - 1)
-                cY_avg = cY_avg / (len(contours) - 1)
-                print(cX_avg, cY_avg)
-                if cX < 500 or cX > 525:
-                    x = pos_tar[0] + (cX - 512)*(100/1000)
-                    y = pos_tar[1]
-                    z = pos_tar[2]
-                    err = vrep.simxSetObjectPosition(clientID, target_handle, -1,
-                                                        [x,y,z],
-                                                        vrep.simx_opmode_blocking)
-                    (err, tar_or) = vrep.simxGetObjectOrientation(clientID, target_handle, -1,
-                                                                  vrep.simx_opmode_buffer)
-                    print(tar_or)
-                else:
-                    break
+            cX_avg = int(cX_avg / (len(contours) - 1))
+            cY_avg = int(cY_avg / (len(contours) - 1))
+            print(cX_avg, cY_avg)
+            if (cX_avg < 500 or cY_avg > 525):
+                x = pos_tar[0] - (cX - 512)*(100/1000)
+                y = pos_tar[1]
+                z = pos_tar[2]
+                gamma = math.atan2(y, x)
+                vrep.simxSetObjectOrientation(clientID, target_handle, -1,
+                                              [x,y,z],
+                                              vrep.simx_opmode_oneshot)
+                #vrep.simxSetObjectOrientation(clientID, target_handle, -1,[tar_or[0],tar_or[1],gamma],vrep.simx_opmode_oneshot)
+                (err, tar_or) = vrep.simxGetObjectOrientation(clientID, target_handle, -1,
+                                                              vrep.simx_opmode_buffer)
+                time.sleep(0.5)
+
+                print(tar_or)
+            else:
+                break
 
             cv2.imshow('Fig', edges)
             if cv2.waitKey(1) & 0xFF == ord('q'):
