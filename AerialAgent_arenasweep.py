@@ -44,6 +44,39 @@ print ('Program started to execute in V-Rep')
 vrep.simxFinish(-1) # just in case, close all opened connections
 clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
 
+def clustering(c):
+    c = c.reshape((-1, 2))
+
+    # print('Sorting...')
+    idx = np.argsort(c[:, 0])
+    c = c[idx]
+
+    # print('Clustering...')
+
+    epsilon = 0.5
+
+    # Find euclidean distance between consecutive rows
+    differences = np.diff(c, axis=0, prepend=0)
+    euclidean_distance = np.linalg.norm(differences, axis=1)
+
+    # Gather first index of unique measurments
+    unique_idx = np.arange(len(c))[euclidean_distance > epsilon]
+    print(f"There are {len(unique_idx)} objects to be collected.")
+
+    # Average out values
+    clustered = np.zeros(2)
+    for i, idx in enumerate(unique_idx):
+        idx1 = idx
+        if i == len(unique_idx) - 1:
+            average = np.average(c[idx1::], axis=0)
+        else:
+            idx2 = unique_idx[i + 1]
+            average = np.average(c[idx1:idx2], axis=0)
+        clustered = np.vstack((clustered, average))
+        corrected = clustered[1:]
+
+    return corrected
+
 if clientID != -1:
     print('Connection Established to remote API server')
 
@@ -60,6 +93,7 @@ if clientID != -1:
     obs_map = np.zeros(shape=[1000, 1000], dtype=np.uint8)
     OBJS_X = []
     OBJS_Y = []
+    OBJS = []
     flag_saved = False
 
     traj = start
@@ -302,6 +336,14 @@ if clientID != -1:
                                 # # print(OBJS)
                                 # np.savetxt('OBJS.txt',np.transpose(OBJS))
 
+                                ## For clustering
+                                OBJS = np.append(OBJS, x_pos)
+                                OBJS = np.append(OBJS, y_pos)
+                                if (len(OBJS) > 2):
+                                    ## call clustering
+                                    OBJS_clustered = clustering(OBJS)
+                                    print(OBJS_clustered)
+
                 debug_image = raw_img
 
                 cv2.imshow("image", debug_image)
@@ -311,6 +353,7 @@ if clientID != -1:
             OBJS = np.asarray([OBJS_X, OBJS_Y])
             print(OBJS)
             np.savetxt('OBJS.txt', np.transpose(OBJS))
+            np.savetxt('OBJS_clustered.txt', np.transpose(OBJS_clustered))
             flag_saved=True
             print("File SAVED !!!!!!!!!")
 
