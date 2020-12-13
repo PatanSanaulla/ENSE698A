@@ -18,7 +18,7 @@ arena_3Q = (-50,-50)
 arena_4Q = (50,-50)
 fov = 45
 h = 15
-acceptance_radius = .5
+acceptance_radius = 1
 V = .1
 
 try:
@@ -76,11 +76,11 @@ if clientID != -1:
     while(i_cov<N_cov):
 
         if (np.mod(i_cov,2)!=0):
-            wpt[k] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+(-1)*0.5*cov, h)
-            wpt[k+1] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-(-1)*0.5*cov, h)
+            wpt[k] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+(-2)*0.5*cov, h)
+            wpt[k+1] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-(-2)*0.5*cov, h)
         else:
-            wpt[k] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-(-1)*0.5*cov, h)
-            wpt[k+1] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+(-1)*0.5*cov, h)
+            wpt[k] = (arena_2Q[0]+(i_cov+0.5)*cov, arena_1Q[1]-(-2)*0.5*cov, h)
+            wpt[k+1] = (arena_3Q[0]+(i_cov+0.5)*cov, arena_4Q[1]+(-2)*0.5*cov, h)
 
         k=k+2
         i_cov = i_cov+1
@@ -195,7 +195,7 @@ if clientID != -1:
                     k=k+1
             else:
                 ## waypoint complete
-                print(np.linalg.norm(np.subtract(pos,np.asarray(wpt[k]))))
+                # print(np.linalg.norm(np.subtract(pos,np.asarray(wpt[k]))))
                 k=k+1
 
         if (k>2 and k<len(wpt)-2):
@@ -285,11 +285,14 @@ if clientID != -1:
                         if (M["m00"]!=0):
                             cX = int(M["m10"] / M["m00"])
                             cY = int(M["m01"] / M["m00"])
-                            if (cX>50 and cX<1000-50 and cY>300 and cY<1000-300):
+                            if (cX>50 and cX<1000-50 and cY>400 and cY<1000-400):
                                 cv2.circle(raw_img, (cX, cY), 30, (255,0,0), 5)
                                 f = 500.0 / np.tan(0.5 * fov * (np.pi / 180.0))
                                 x_pos = ((cX - 500.0) / f) * (pos[2]-0.1) + pos[0]
-                                y_pos = (-(cY - 500.0) / f) * (pos[2]-0.1) + pos[1]
+                                if (wpt[k][1] > 0):
+                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] + 1.4 + 0.37
+                                else:
+                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] - 1.4 - 0.27
                                 print(x_pos, y_pos)
                                 OBJS_X = np.append(OBJS_X, x_pos)
                                 OBJS_Y = np.append(OBJS_Y, y_pos)
@@ -311,7 +314,7 @@ if clientID != -1:
             flag_saved=True
             print("File SAVED !!!!!!!!!")
 
-        time.sleep(.01)
+        time.sleep(.1)
         t = time.time() - t0
     #eow
 
