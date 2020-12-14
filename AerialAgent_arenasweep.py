@@ -8,6 +8,10 @@
 #
 # IMPORTANT: for each successful call to simxStart, there
 # should be a corresponding call to simxFinish at the end!
+import numpy as np
+
+obs_map = np.zeros(shape=[1000, 1000], dtype=np.uint8)
+OBJS_clustered = []
 
 center = (0,0)
 
@@ -61,7 +65,7 @@ def clustering(c):
 
     # Gather first index of unique measurments
     unique_idx = np.arange(len(c))[euclidean_distance > epsilon]
-    print(f"There are {len(unique_idx)} objects to be collected.")
+    # print(f"There are {len(unique_idx)} objects to be collected.")
 
     # Average out values
     clustered = np.zeros(2)
@@ -89,8 +93,6 @@ if clientID != -1:
 
     # Now send some data to V-REP in a non-blocking fashion:
     vrep.simxAddStatusbarMessage(clientID,'Sweep Start!',vrep.simx_opmode_oneshot) #This message should be printed on your CopelliaSim in the bottm
-
-    obs_map = np.zeros(shape=[1000, 1000], dtype=np.uint8)
     OBJS_X = []
     OBJS_Y = []
     OBJS = []
@@ -342,7 +344,7 @@ if clientID != -1:
                                 if (len(OBJS) > 2):
                                     ## call clustering
                                     OBJS_clustered = clustering(OBJS)
-                                    print(OBJS_clustered)
+                                    # print(OBJS_clustered)
 
                 debug_image = raw_img
 
