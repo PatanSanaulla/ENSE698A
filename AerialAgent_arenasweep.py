@@ -57,7 +57,7 @@ def clustering(c):
 
     # print('Clustering...')
 
-    epsilon = 0.5
+    epsilon = 2.0
 
     # Find euclidean distance between consecutive rows
     differences = np.diff(c, axis=0, prepend=0)
@@ -143,10 +143,10 @@ if clientID != -1:
 
         # vrep.simxAddStatusbarMessage(clientID,repr(time.time()),vrep.simx_opmode_oneshot)
 
-        (ret, pos_d) = vrep.simxGetObjectPosition(clientID, target_handle, -1, vrep.simx_opmode_oneshot)
+        # (ret, pos_d) = vrep.simxGetObjectPosition(clientID, target_handle, -1, vrep.simx_opmode_oneshot)
         (ret, pos) = vrep.simxGetObjectPosition(clientID, quad_handle, -1,vrep.simx_opmode_oneshot)
-        (ret, linvel, angvel) = vrep.simxGetObjectVelocity(clientID, quad_handle, vrep.simx_opmode_oneshot)
-        (ret, Euler) = vrep.simxGetObjectOrientation(clientID, quad_handle, -1,vrep.simx_opmode_oneshot)
+        # (ret, linvel, angvel) = vrep.simxGetObjectVelocity(clientID, quad_handle, vrep.simx_opmode_oneshot)
+        # (ret, Euler) = vrep.simxGetObjectOrientation(clientID, quad_handle, -1,vrep.simx_opmode_oneshot)
 
         pos = np.asarray(pos)
 
@@ -237,6 +237,7 @@ if clientID != -1:
         if (k>2 and k<len(wpt)-2):
             ## FIND OBJECTS LOACTION DURING ARENA SWEEP
             (ret, reso, raw_img) = vrep.simxGetVisionSensorImage(clientID, camera_handle, 0, vrep.simx_opmode_streaming)
+            (ret, pos) = vrep.simxGetObjectPosition(clientID, quad_handle, -1, vrep.simx_opmode_oneshot)
             raw_img = np.array(raw_img, dtype=np.uint8)
             # print(raw_img)
             if (len(raw_img) != 0):
@@ -321,15 +322,17 @@ if clientID != -1:
                         if (M["m00"]!=0):
                             cX = int(M["m10"] / M["m00"])
                             cY = int(M["m01"] / M["m00"])
-                            if (cX>50 and cX<1000-50 and cY>400 and cY<1000-400):
+                            if (cX>50 and cX<1000-50 and cY>30 and cY<1000-30):
                                 cv2.circle(raw_img, (cX, cY), 30, (255,0,0), 5)
                                 f = 500.0 / np.tan(0.5 * fov * (np.pi / 180.0))
                                 x_pos = ((cX - 500.0) / f) * (pos[2]-0.1) + pos[0]
                                 if (wpt[k][1] > 0):
-                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] + 1.4 + 0.37
+                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1]
+                                    # y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] + 1.4 + 0.37
                                 else:
-                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] - 1.4 - 0.27
-                                print(x_pos, y_pos)
+                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1]
+                                    # y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] - 1.4 - 0.27
+                                # print(x_pos, y_pos)
                                 OBJS_X = np.append(OBJS_X, x_pos)
                                 OBJS_Y = np.append(OBJS_Y, y_pos)
                                 # print(OBJS_X,OBJS_Y)
@@ -344,6 +347,8 @@ if clientID != -1:
                                 if (len(OBJS) > 2):
                                     ## call clustering
                                     OBJS_clustered = clustering(OBJS)
+                                    np.savetxt('OBJS.txt', np.transpose(OBJS))
+                                    np.savetxt('OBJS_clustered.txt', OBJS_clustered)
                                     # print(OBJS_clustered)
 
                 debug_image = raw_img
@@ -355,7 +360,7 @@ if clientID != -1:
             OBJS = np.asarray([OBJS_X, OBJS_Y])
             print(OBJS)
             np.savetxt('OBJS.txt', np.transpose(OBJS))
-            np.savetxt('OBJS_clustered.txt', np.transpose(OBJS_clustered))
+            np.savetxt('OBJS_clustered.txt', OBJS_clustered)
             flag_saved=True
             print("File SAVED !!!!!!!!!")
 
