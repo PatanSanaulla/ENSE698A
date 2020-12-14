@@ -34,7 +34,7 @@ if clientID != -1:
     (err, res, img) = vrep.simxGetVisionSensorImage(clientID, cam_handle, 0, vrep.simx_opmode_buffer)
 
     # Get target position
-    (err, pos_tar) = vrep.simxGetObjectPosition(clientID, target_handle, -1, vrep.simx_opmode_blocking)
+    (err, pos_tar) = vrep.simxGetObjectPosition(clientID, target_handle, -1, vrep.simx_opmode_streaming)
     (err, tar_or) = vrep.simxGetObjectOrientation(clientID, target_handle, -1, vrep.simx_opmode_streaming)
 
     print(pos_tar, tar_or)
@@ -104,8 +104,8 @@ if clientID != -1:
             cX_avg = int(cX_avg / (len(contours) - 1))
             cY_avg = int(cY_avg / (len(contours) - 1))
             print(cX_avg, cY_avg)
-            if (cX_avg < 500 or cY_avg > 525):
-                x = pos_tar[0] - (cX - 512)*(100/1000)
+            if cX_avg < 500 or cY_avg > 525:
+                x = pos_tar[0] - (cX_avg - 512)*(100/1000)
                 y = pos_tar[1]
                 z = pos_tar[2]
                 gamma = math.atan2(y, x)

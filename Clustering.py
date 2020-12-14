@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 def cluster(file):
     """ Returns an Nx2 numpy array of averaged unique measurements given a 
@@ -11,7 +11,6 @@ def cluster(file):
     
     c = c.astype(np.float)
     c = c.reshape((-1, 2))
-
     # =========================================================================
     # plt.plot(c[:,0], c[:,1], 'b+')
     # plt.title('Raw Data')
@@ -60,5 +59,5 @@ def cluster(file):
 
     return corrected
 
-file = 'OBJS_easy.txt'
+file = 'OBJS_easy_corr.txt'
 print(cluster(file))

@@ -58,28 +58,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="AerialAgent_control" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ENSE698A" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/AerialAgent_control.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="Astar_rigid" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ENSE698A" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -102,6 +80,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Clustering" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ENSE698A" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Clustering.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="integratedRun" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ENSE698A" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -114,6 +114,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/integratedRun.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -149,13 +150,13 @@
       <list>
         <item itemvalue="Python.integratedRun" />
         <item itemvalue="Python.AerialAgent_arenasweep" />
+        <item itemvalue="Python.Clustering" />
         <item itemvalue="Python.Astar_rigid" />
         <item itemvalue="Python.testObstacleMap" />
-        <item itemvalue="Python.AerialAgent_control" />
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -168,6 +169,7 @@
       <updated>1604716554573</updated>
       <workItem from="1604716556306" duration="1020000" />
       <workItem from="1607539075859" duration="5771000" />
+      <workItem from="1607880672891" duration="3928000" />
     </task>
     <servers />
   </component>
@@ -192,53 +194,53 @@
       <screen x="1920" y="0" width="1536" height="824" />
     </state>
     <state x="2416" y="27" key="#testObstacleMap/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607540281713" />
-    <state x="826" y="194" key="#xdebugger.evaluate" timestamp="1607543650523">
+    <state x="826" y="194" key="#xdebugger.evaluate" timestamp="1607883038566">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="826" y="194" key="#xdebugger.evaluate/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607543650523" />
+    <state x="826" y="194" key="#xdebugger.evaluate/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883038566" />
     <state x="2468" y="167" key="FileChooserDialogImpl" timestamp="1604716976064">
       <screen x="1920" y="0" width="1536" height="824" />
     </state>
     <state x="2468" y="167" key="FileChooserDialogImpl/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1604716976064" />
-    <state width="949" height="252" key="GridCell.Tab.0.bottom" timestamp="1607823259073">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="171" key="GridCell.Tab.0.bottom" timestamp="1607883696579">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="247" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607546739198" />
-    <state width="949" height="252" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1607823259073" />
-    <state width="949" height="252" key="GridCell.Tab.0.center" timestamp="1607823259073">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="171" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883696579" />
+    <state width="949" height="77" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1607827043899" />
+    <state width="1493" height="171" key="GridCell.Tab.0.center" timestamp="1607883696579">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="247" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607546739198" />
-    <state width="949" height="252" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1607823259073" />
-    <state width="949" height="252" key="GridCell.Tab.0.left" timestamp="1607823259073">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="171" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883696579" />
+    <state width="949" height="77" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1607827043899" />
+    <state width="1493" height="171" key="GridCell.Tab.0.left" timestamp="1607883696579">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="247" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607546739198" />
-    <state width="949" height="252" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1607823259073" />
-    <state width="949" height="252" key="GridCell.Tab.0.right" timestamp="1607823259073">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="171" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883696579" />
+    <state width="949" height="77" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1607827043899" />
+    <state width="1493" height="171" key="GridCell.Tab.0.right" timestamp="1607883696579">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="247" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607546739198" />
-    <state width="949" height="252" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1607823259073" />
-    <state width="949" height="129" key="GridCell.Tab.1.bottom" timestamp="1607724163918">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="171" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883696579" />
+    <state width="949" height="77" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1607827043899" />
+    <state width="1493" height="240" key="GridCell.Tab.1.bottom" timestamp="1607883052763">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="303" key="GridCell.Tab.1.bottom/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607543763950" />
+    <state width="1493" height="240" key="GridCell.Tab.1.bottom/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883052763" />
     <state width="949" height="129" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1607724163918" />
-    <state width="949" height="129" key="GridCell.Tab.1.center" timestamp="1607724163918">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="240" key="GridCell.Tab.1.center" timestamp="1607883052762">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="303" key="GridCell.Tab.1.center/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607543763950" />
+    <state width="1493" height="240" key="GridCell.Tab.1.center/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883052762" />
     <state width="949" height="129" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1607724163918" />
-    <state width="949" height="129" key="GridCell.Tab.1.left" timestamp="1607724163918">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="240" key="GridCell.Tab.1.left" timestamp="1607883052762">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="303" key="GridCell.Tab.1.left/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607543763950" />
+    <state width="1493" height="240" key="GridCell.Tab.1.left/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883052762" />
     <state width="949" height="129" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1607724163918" />
-    <state width="949" height="129" key="GridCell.Tab.1.right" timestamp="1607724163918">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state width="1493" height="240" key="GridCell.Tab.1.right" timestamp="1607883052763">
+      <screen x="1920" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="303" key="GridCell.Tab.1.right/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607543763950" />
+    <state width="1493" height="240" key="GridCell.Tab.1.right/0.0.1536.824/1920.0.1536.824@1920.0.1536.824" timestamp="1607883052763" />
     <state width="949" height="129" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1607724163918" />
     <state x="461" y="165" key="SettingsEditor" timestamp="1607642080198">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -257,5 +259,8 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="777" y="434" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1920.1040@0.0.1920.1040" timestamp="1607715308176" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ENSE698A$integratedRun.coverage" NAME="integratedRun Coverage Results" MODIFIED="1607883696572" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
