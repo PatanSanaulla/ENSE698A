@@ -78,29 +78,29 @@ def orientGroundAgent():
 def convertToPxlCoord(vrepCoord):
     return [math.ceil(500 - (vrepCoord[1]*(1000/100))), math.ceil(500 + (vrepCoord[0]*(1000/100)))]
 
-# def AerialAgentNavigationThread():
-#     global OBJS_clustered, obs_map
-#     np.savetxt('OBJS_clustered.txt', OBJS_clustered)
-#     import AerialAgent_arenasweep
-#
-# def InputOutputThread():
-#     global OBJS_clustered, obs_map
-#     file = 'OBJS_clustered.txt'
-#     while True:
-#         f = open(file, 'r')
-#         c = np.array(f.read().split())
-#         f.close()
-#         c = c.astype(np.float)
-#         OBJS_clustered = c.reshape((-1, 2))
-#
-#         if (len(OBJS_clustered)>0):
-#             #Read the obs_map.png file
-#             flag_obs_map_available = True
-#
-#             print("Thread Output")
-#             print("Map is available and Objects Cluster is")
-#             print(OBJS_clustered)
-#         time.sleep(1)
+def AerialAgentNavigationThread():
+    global OBJS_clustered, obs_map
+    np.savetxt('OBJS_clustered.txt', OBJS_clustered)
+    import AerialAgent_arenasweep
+
+def InputOutputThread():
+    global OBJS_clustered, obs_map
+    file = 'OBJS_clustered.txt'
+    while True:
+        f = open(file, 'r')
+        c = np.array(f.read().split())
+        f.close()
+        c = c.astype(np.float)
+        OBJS_clustered = c.reshape((-1, 2))
+
+        if (len(OBJS_clustered)>0):
+            #Read the obs_map.png file
+            flag_obs_map_available = True
+
+            print("Thread Output")
+            print("Map is available and Objects Cluster is")
+            print(OBJS_clustered)
+        time.sleep(1)
 
 vrep.simxFinish(-1) # just in case, close all opened connections
 clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
@@ -130,12 +130,12 @@ if clientID != -1:
     #Threaded Function to get the GPS value of the Ground agent position
     thread2 = Thread(target=getGroundAgentPosition)
     thread2.start()
-    # #Threaded Function to get the GPS value of the Ground agent position
-    # thread3 = Thread(target=AerialAgentNavigationThread)
-    # thread3.start()
-    # #Threaded Function to get the GPS value of the Ground agent position
-    # thread4 = Thread(target=InputOutputThread)
-    # thread4.start()
+    #Threaded Function to get the GPS value of the Ground agent position
+    thread3 = Thread(target=AerialAgentNavigationThread)
+    thread3.start()
+    #Threaded Function to get the GPS value of the Ground agent position
+    thread4 = Thread(target=InputOutputThread)
+    thread4.start()
 
     #file = open('OBJS_easy.txt', 'r')
     #Lines = file.readlines()
