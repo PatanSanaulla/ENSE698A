@@ -147,12 +147,12 @@ def fetchVSDataAndOrient(clientID):
                 vrep.simxSetObjectOrientation(clientID, target_handle, -1, orientation,
                                               vrep.simx_opmode_blocking)
 
-            cv2.imshow('Fig', edges)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-            elif err == vrep.simx_return_novalue_flag:
-                print("no image yet")
-                pass
-
-    cv2.waitKey(0)  # waits until a key is pressed
-    cv2.destroyAllWindows()
+    #         cv2.imshow('Fig', edges)
+    #         if cv2.waitKey(1) & 0xFF == ord('q'):
+    #             break
+    #         elif err == vrep.simx_return_novalue_flag:
+    #             print("no image yet")
+    #             pass
+    #
+    # cv2.waitKey(0)  # waits until a key is pressed
+    # cv2.destroyAllWindows()

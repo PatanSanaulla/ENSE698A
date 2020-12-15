@@ -70,10 +70,13 @@ class Planner:
         posY = position[1]
         i = 0
         while (i <= clearance):
-            if self.gray_map[posX][posY] > 127 or self.gray_map[posX + i][posY] > 127 or self.gray_map[posX][posY + i] > 127 or self.gray_map[posX + i][
-                posY + i] > 127:
+            try:
+                if self.gray_map[posX][posY] > 127 or self.gray_map[posX + i][posY] > 127 or self.gray_map[posX][posY + i] > 127 or self.gray_map[posX + i][
+                    posY + i] > 127:
+                    return False
+                i = i + 1
+            except:
                 return False
-            i = i + 1
         return True
 
     def showPath(self, pathValues, Explored):
