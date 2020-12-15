@@ -29,6 +29,8 @@ OBJECTS_LIST = ["-4.301942795144567100e+01 1.668216601234799512e+01", "-3.903965
                 "7.011463087285690676e+00 2.103207979694845520e+01", "2.388495074492705594e+00 3.929433142321048233e+00", "1.299595617362090572e+01 -2.783283076362472030e+01",
                 "3.085184920661876973e+01 -3.675865612396758131e-01", "3.019226145403777650e+01 -2.287676242565955675e+01", "3.020265316122621613e+01 -2.287676800407635014e+01"]
 COLLECTED_OBJECTS = []
+CURRENT_OBJECT_LOCATION = []
+AGENT_ORIENTED = False
 
 def getTargetPosition():
     global GPS_Target
@@ -52,13 +54,23 @@ def getGroundAgentPosition():
             continue
 
 def compareTargetAndGA():
+    global AGENT_ORIENTED
     Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking )[1]
     Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )[1]
+    Ox, Oy = CURRENT_OBJECT_LOCATION
+    if AGENT_ORIENTED == False and ( ((Ox - Tx) ** 2 + (Oy - Ty) ** 2 <= (19) ** 2)) :
+        orientGroundAgent()
+        Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking)[1]
+        Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking)[1]
+        AGENT_ORIENTED = True
     if ((Gx - Tx) ** 2 + (Gy - Ty) ** 2 <= (0.5) ** 2): #radius of 10Cms
         return True
     else:
         return False
 
+def orientGroundAgent():
+    import perception
+    perception.fetchVSDataAndOrient(clientID)
 
 def convertToPxlCoord(vrepCoord):
     return [math.ceil(500 - (vrepCoord[1]*(1000/100))), math.ceil(500 + (vrepCoord[0]*(1000/100)))]
@@ -74,9 +86,11 @@ if clientID != -1:
     #This message should be printed on your CopelliaSim in the bottm
     start_time = time.time() #Start of the whole code
 
+    #getting the CoppeliaSm Handles
     returnCode, target = vrep.simxGetObjectHandle(clientID, 'GV_target', vrep.simx_opmode_oneshot_wait)
-
     returnCode, groundAgent = vrep.simxGetObjectHandle(clientID, 'youBot', vrep.simx_opmode_oneshot_wait)
+    err, cam_handle = vrep.simxGetObjectHandle(clientID, 'Vision_sensor', vrep.simx_opmode_oneshot_wait)
+    #err, prox_sensor = vrep.simxGetObjectHandle(clientID, 'BaxterGripper_attachProxSensor', vrep.simx_opmode_blocking)
 
     gndAgt = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking)
     GPS_GroundAgent = convertToPxlCoord(gndAgt[1])
@@ -113,7 +127,10 @@ if clientID != -1:
 
         closestObject = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
         TARGET_POINTS = ALL_PATHS[closestObject]
-        ALL_PATHS = dict()#clear the path to
+        CURRENT_OBJECT_LOCATION = [float(x) for x in object.split(" ")]
+        AGENT_ORIENTED = False
+
+        ALL_PATHS = dict()#clear all the path values for the next iteration
         vrep.simxAddStatusbarMessage(clientID,'Found the Closest object',vrep.simx_opmode_oneshot)
         print(closestObject)
         print(TARGET_POINTS)
