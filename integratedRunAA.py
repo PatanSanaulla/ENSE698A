@@ -33,6 +33,7 @@ OBJECTS_LIST = ["-4.301942795144567100e+01 1.668216601234799512e+01", "-3.903965
                 "3.085184920661876973e+01 -3.675865612396758131e-01", "3.019226145403777650e+01 -2.287676242565955675e+01", "3.020265316122621613e+01 -2.287676800407635014e+01"]
 OBJS_clustered = []
 obs_map = np.zeros(shape=[1000, 1000], dtype=np.uint8)
+flag_obs_map_available = False
 COLLECTED_OBJECTS = []
 
 def getTargetPosition():
@@ -70,14 +71,26 @@ def convertToPxlCoord(vrepCoord):
 
 def AerialAgentNavigationThread():
     global OBJS_clustered, obs_map
-    from AerialAgent_arenasweep import obs_map, OBJS_clustered
+    np.savetxt('OBJS_clustered.txt', OBJS_clustered)
     import AerialAgent_arenasweep
 
-def OutputThread():
+def InputOutputThread():
     global OBJS_clustered, obs_map
+    file = 'OBJS_clustered.txt'
     while True:
-        print("Thread Output")
-        print(OBJS_clustered)
+        f = open(file, 'r')
+        c = np.array(f.read().split())
+        f.close()
+        c = c.astype(np.float)
+        OBJS_clustered = c.reshape((-1, 2))
+
+        if (len(OBJS_clustered)>0):
+            #Read the obs_map.png file
+            flag_obs_map_available = True
+
+            print("Thread Output")
+            print("Map is available and Objects Cluster is")
+            print(OBJS_clustered)
         time.sleep(1)
 
 vrep.simxFinish(-1) # just in case, close all opened connections
@@ -110,7 +123,7 @@ if clientID != -1:
     thread3 = Thread(target=AerialAgentNavigationThread)
     thread3.start()
     #Threaded Function to get the GPS value of the Ground agent position
-    thread4 = Thread(target=OutputThread)
+    thread4 = Thread(target=InputOutputThread)
     thread4.start()
 
     #file = open('OBJS_easy.txt', 'r')
