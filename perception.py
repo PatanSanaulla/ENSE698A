@@ -71,7 +71,7 @@ def fetchVSDataAndOrient(clientID, x_or, y_or):
                 else:
                     alpha = tar_or[0]
                     beta = tar_or[1]
-                    gamma = math.atan2(pos_tar[1], pos_tar[0])  # this will change to object coordinates
+                    gamma = math.atan2(y_or, x_or)  # this will change to object coordinates
                     orientation = [alpha, beta, gamma]
                     vrep.simxSetObjectOrientation(clientID, target_handle, -1, orientation,
                                                   vrep.simx_opmode_blocking)
@@ -154,7 +154,7 @@ def fetchVSDataAndOrient(clientID, x_or, y_or):
                         orientation = [alpha, beta, gamma]
                         vrep.simxSetObjectOrientation(clientID, target_handle, -1, orientation,
                                                       vrep.simx_opmode_blocking)
-                        if x <= -1024:
+                        if x <= -512:
                             flag = 1
 
                         # time.sleep(0.5)
@@ -169,7 +169,7 @@ def fetchVSDataAndOrient(clientID, x_or, y_or):
                 orientation = [alpha, beta, gamma]
                 vrep.simxSetObjectOrientation(clientID, target_handle, -1, orientation,
                                               vrep.simx_opmode_blocking)
-                if x <= -1024:
+                if x <= -512:
                     flag = 1
 
             cv2.imshow('Fig', edges)

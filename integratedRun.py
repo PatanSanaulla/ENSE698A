@@ -5,9 +5,8 @@ try:
     import arenasweep
     import sys
     from threading import Thread
-    import time
     import math
-    from time import sleep
+    from time import sleep, time
     import numpy as np
 
 except:
@@ -36,6 +35,7 @@ COLLECTED_OBJECTS = []
 CURRENT_OBJECT_LOCATION = []
 AGENT_ORIENTED = False
 flag_obs_map_available = False
+TIME_OUT = False
 
 def terminationThread():
     global TIME_OUT
@@ -68,24 +68,23 @@ def getGroundAgentPosition():
             continue
 
 def compareTargetAndGA():
-    global AGENT_ORIENTED
     Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking )[1]
     Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )[1]
-    Ox, Oy = CURRENT_OBJECT_LOCATION
-    if AGENT_ORIENTED == False and (15 ** 2 <= ((Ox - Tx) ** 2 + (Oy - Ty) ** 2) <= 19 ** 2):
-        x_or = Ox - Tx
-        y_or = Oy - Ty
-        orientGroundAgent(x_or, y_or)
-        Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking)[1]
-        Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking)[1]
-        AGENT_ORIENTED = True
     if ((Gx - Tx) ** 2 + (Gy - Ty) ** 2 <= (0.5) ** 2): #radius of 10Cms
         return True
     else:
         return False
 
 def orientGroundAgent():
-    perception.fetchVSDataAndOrient(clientID)
+    global AGENT_ORIENTED
+    Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking)[1]
+    Ox, Oy = CURRENT_OBJECT_LOCATION
+    if AGENT_ORIENTED == False and (15 ** 2 <= ((Ox - Tx) ** 2 + (Oy - Ty) ** 2) <= 19 ** 2):
+        x_or = Ox - Tx
+        y_or = Oy - Ty
+        perception.fetchVSDataAndOrient(clientID, x_or, y_or)
+        AGENT_ORIENTED = True
+
 
 def convertToPxlCoord(vrepCoord):
     return [math.ceil(500 - (vrepCoord[1]*(1000/100))), math.ceil(500 + (vrepCoord[0]*(1000/100)))]
@@ -184,6 +183,8 @@ if clientID != -1:
             print(TARGET_POINTS)
             start_moving_time = time()  # Start of the whole code
             for i in range(0, len(TARGET_POINTS), 4):
+                if len(TARGET_POINTS)-i < 20 and AGENT_ORIENTED == False:
+                    orientGroundAgent()
                 if TIME_OUT == True:
                     break
                 if GPS_Target ==  TARGET_POINTS[i]:
