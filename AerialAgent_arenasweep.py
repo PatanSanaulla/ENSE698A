@@ -347,7 +347,7 @@ if clientID != -1:
                                 if (len(OBJS) > 2):
                                     ## call clustering
                                     OBJS_clustered = clustering(OBJS)
-                                    np.savetxt('OBJS.txt', np.transpose(OBJS))
+                                    # np.savetxt('OBJS.txt', np.transpose(OBJS))
                                     np.savetxt('OBJS_clustered.txt', OBJS_clustered)
                                     # print(OBJS_clustered)
 
