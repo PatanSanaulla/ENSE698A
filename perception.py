@@ -48,7 +48,7 @@ def fetchVSDataAndOrient(clientID):
         sensorImage = cv2.GaussianBlur(sensorImage, (5, 5), 0)
         edges = cv2.Canny(sensorImage, 100, 200)
         ret, binImg = cv2.threshold(edges, 0, 255, 0)
-        trash, contours, hierarchy = cv2.findContours(binImg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(binImg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         if len(contours) != 0:
             for c in contours:
@@ -88,7 +88,7 @@ def fetchVSDataAndOrient(clientID):
             sensorImage = cv2.GaussianBlur(sensorImage, (5, 5), 0)
             edges = cv2.Canny(sensorImage, 100, 200)
             ret, binImg = cv2.threshold(edges, 0, 255, 0)
-            trash, contours, hierarchy = cv2.findContours(binImg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours, hierarchy = cv2.findContours(binImg, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
             if len(contours) != 0:
                 for c in contours:
