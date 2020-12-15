@@ -54,30 +54,23 @@ def getGroundAgentPosition():
             continue
 
 def compareTargetAndGA():
+    global AGENT_ORIENTED
     Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking )[1]
     Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )[1]
     Ox, Oy = CURRENT_OBJECT_LOCATION
-    if AGENT_ORIENTED == False and ( math.fabs(Tx - Ox) > 1.5 and math.fabs(Tx - Ox) < 1.7 ) :
+    if AGENT_ORIENTED == False and ( ((Ox - Tx) ** 2 + (Oy - Ty) ** 2 <= (19) ** 2)) :
         orientGroundAgent()
+        Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking)[1]
+        Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking)[1]
+        AGENT_ORIENTED = True
     if ((Gx - Tx) ** 2 + (Gy - Ty) ** 2 <= (0.5) ** 2): #radius of 10Cms
         return True
     else:
         return False
 
 def orientGroundAgent():
-    # Get Detected image
-    err, res, img = vrep.simxGetVisionSensorImage(clientID, cam_handle, 0, vrep.simx_opmode_streaming)
-    time.sleep(0.5)
-    err, res, img = vrep.simxGetVisionSensorImage(clientID, cam_handle, 0, vrep.simx_opmode_buffer)
-
-    # Format image
-    sensorImage = []
-    sensorImage = np.array(img, dtype=np.uint8)
-    x = 512
-    y = 512
-    flag = 0
-
-
+    import perception
+    perception.fetchVSDataAndOrient(clientID)
 
 def convertToPxlCoord(vrepCoord):
     return [math.ceil(500 - (vrepCoord[1]*(1000/100))), math.ceil(500 + (vrepCoord[0]*(1000/100)))]
@@ -135,7 +128,9 @@ if clientID != -1:
         closestObject = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
         TARGET_POINTS = ALL_PATHS[closestObject]
         CURRENT_OBJECT_LOCATION = [float(x) for x in object.split(" ")]
-        ALL_PATHS = dict()#clear the path to
+        AGENT_ORIENTED = False
+
+        ALL_PATHS = dict()#clear all the path values for the next iteration
         vrep.simxAddStatusbarMessage(clientID,'Found the Closest object',vrep.simx_opmode_oneshot)
         print(closestObject)
         print(TARGET_POINTS)
