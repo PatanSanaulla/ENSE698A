@@ -1,11 +1,12 @@
 try:
     import vrep
     import planner as plnr
+    import perception
+    import arenasweep
     import sys
     from threading import Thread
-    import time
     import math
-    from time import sleep
+    from time import sleep, time
     import numpy as np
 
 except:
@@ -32,8 +33,18 @@ OBJECTS_LIST = ["-4.301942795144567100e+01 1.668216601234799512e+01", "-3.903965
 OBJS_clustered = []
 COLLECTED_OBJECTS = []
 CURRENT_OBJECT_LOCATION = []
+TIME_OUT = False
 AGENT_ORIENTED = False
 flag_obs_map_available = False
+
+def terminationThread():
+    global TIME_OUT
+    while True:
+        total_time = time() - start_time
+        if total_time > 720: #12 mins
+            TIME_OUT = True
+            vrep.simxAddStatusbarMessage(clientID, 'Hurry up!!', vrep.simx_opmode_oneshot)
+            break
 
 def getTargetPosition():
     global GPS_Target
@@ -62,7 +73,7 @@ def compareTargetAndGA():
     Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking )[1]
     Ox, Oy = CURRENT_OBJECT_LOCATION
     if AGENT_ORIENTED == False and ( ((Ox - Tx) ** 2 + (Oy - Ty) ** 2 <= (19) ** 2)) :
-        orientGroundAgent()
+        #orientGroundAgent()
         Tx, Ty, Tz = vrep.simxGetObjectPosition(clientID, target, -1, vrep.simx_opmode_blocking)[1]
         Gx, Gy, Gz = vrep.simxGetObjectPosition(clientID, groundAgent, -1, vrep.simx_opmode_blocking)[1]
         AGENT_ORIENTED = True
@@ -72,7 +83,6 @@ def compareTargetAndGA():
         return False
 
 def orientGroundAgent():
-    import perception
     perception.fetchVSDataAndOrient(clientID)
 
 def convertToPxlCoord(vrepCoord):
@@ -81,10 +91,11 @@ def convertToPxlCoord(vrepCoord):
 def AerialAgentNavigationThread():
     global OBJS_clustered, obs_map
     np.savetxt('OBJS_clustered.txt', OBJS_clustered)
-    import AerialAgent_arenasweep
+    #import AerialAgent_arenasweep
+    arenasweep.initiate(clientID)
 
 def InputOutputThread():
-    global OBJS_clustered, obs_map
+    global OBJS_clustered, obs_map, flag_obs_map_available
     file = 'OBJS_clustered.txt'
     while True:
         f = open(file, 'r')
@@ -100,17 +111,17 @@ def InputOutputThread():
             print("Thread Output")
             print("Map is available and Objects Cluster is")
             print(OBJS_clustered)
-        time.sleep(1)
+        sleep(1)
 
 vrep.simxFinish(-1) # just in case, close all opened connections
 clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
+start_time = time() #Start of the whole code
 
 if clientID != -1:
     print('Connection Established to remote API server')
     # Now send some data to V-REP in a non-blocking fashion:
     vrep.simxAddStatusbarMessage(clientID,'Connected to Python Code base',vrep.simx_opmode_oneshot)
     #This message should be printed on your CopelliaSim in the bottm
-    start_time = time.time() #Start of the whole code
 
     #getting the CoppeliaSm Handles
     returnCode, target = vrep.simxGetObjectHandle(clientID, 'GV_target', vrep.simx_opmode_oneshot_wait)
@@ -130,67 +141,93 @@ if clientID != -1:
     #Threaded Function to get the GPS value of the Ground agent position
     thread2 = Thread(target=getGroundAgentPosition)
     thread2.start()
-    #Threaded Function to get the GPS value of the Ground agent position
-    thread3 = Thread(target=AerialAgentNavigationThread)
-    thread3.start()
-    #Threaded Function to get the GPS value of the Ground agent position
-    thread4 = Thread(target=InputOutputThread)
-    thread4.start()
+    #Threaded Function to call the Aerial Agent Sweep
+    #thread3 = Thread(target=AerialAgentNavigationThread)
+    #thread3.start()
+    #Threaded Function to save the input output thread
+    #thread4 = Thread(target=InputOutputThread)
+    #thread4.start()
+    #Thread to maintain the time
+    thread5 = Thread(target=terminationThread)
+    thread5.start()
 
-    #file = open('OBJS_easy.txt', 'r')
-    #Lines = file.readlines()
-    while len(OBJECTS_LIST) != len(COLLECTED_OBJECTS):
+    flag_obs_map_available = True
 
-        for object in OBJECTS_LIST:
-            vrep.simxAddStatusbarMessage(clientID, 'Planning ... ', vrep.simx_opmode_oneshot)
-        #for line in Lines:
-            startPoint = GPS_GroundAgent
-            if object in COLLECTED_OBJECTS:
-                continue
-            else:
-                coordinates = [float(x) for x in object.split(" ")]
-                goalPoint = convertToPxlCoord(coordinates)
-                astarPlanner = plnr.Planner(startPoint, goalPoint, "obs_map_easy.png")
-                path = astarPlanner.initiatePlanning()
-                if len(path) == 0:
-                    break
-                ALL_PATHS[object] = path
-                del astarPlanner
-
-        closestObject = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
-        TARGET_POINTS = ALL_PATHS[closestObject]
-        CURRENT_OBJECT_LOCATION = [float(x) for x in object.split(" ")]
-        AGENT_ORIENTED = False
-
-        ALL_PATHS = dict()#clear all the path values for the next iteration
-        vrep.simxAddStatusbarMessage(clientID,'Found the Closest object',vrep.simx_opmode_oneshot)
-        print(closestObject)
-        print(TARGET_POINTS)
-        start_moving_time = time.time()  # Start of the whole code
-        for i in range(0, len(TARGET_POINTS), 1):
-            if GPS_Target ==  TARGET_POINTS[i]:
-                continue
-            else:
-                x = (TARGET_POINTS[i][1]-500)*(100/1000)
-                y = (-TARGET_POINTS[i][0]+500)*(100/1000)
-                z = 0
-                vrep.simxSetObjectPosition(clientID, target, -1, [x, y, z], vrep.simx_opmode_blocking)
-                while True:
-                    if compareTargetAndGA() == True:
+    while True:
+        if len(OBJECTS_LIST) != len(COLLECTED_OBJECTS) and (TIME_OUT == False) and (flag_obs_map_available == True):
+            for object in OBJECTS_LIST:
+                vrep.simxAddStatusbarMessage(clientID, 'Planning ... ', vrep.simx_opmode_oneshot)
+                startPoint = GPS_GroundAgent
+                if object in COLLECTED_OBJECTS:
+                    continue
+                else:
+                    coordinates = [float(x) for x in object.split(" ")]
+                    goalPoint = convertToPxlCoord(coordinates)
+                    astarPlanner = plnr.Planner(startPoint, goalPoint, "obs_map.png") #obs_map.png
+                    path = astarPlanner.initiatePlanning()
+                    if len(path) == 0:
                         break
-        COLLECTED_OBJECTS.append(closestObject)
-        vrep.simxAddStatusbarMessage(clientID,'Reached the object '+str(len(COLLECTED_OBJECTS))+'!!',vrep.simx_opmode_oneshot)
-        end_time = time.time()
-        print("Time for Reaching the object: ", end_time - start_moving_time)
-    print("Total Time: ", end_time - start_time)
+                    ALL_PATHS[object] = path
+                    del astarPlanner
+            if len(ALL_PATHS) == 0:
+                continue
+            closestObject = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
+            TARGET_POINTS = ALL_PATHS[closestObject]
+            CURRENT_OBJECT_LOCATION = [float(x) for x in object.split(" ")]
+            AGENT_ORIENTED = False
+
+            ALL_PATHS = dict()#clear all the path values for the next iteration
+            vrep.simxAddStatusbarMessage(clientID,'Found the path to the Closest object',vrep.simx_opmode_oneshot)
+            print(closestObject)
+            print(TARGET_POINTS)
+            start_moving_time = time()  # Start of the whole code
+            for i in range(0, len(TARGET_POINTS), 4):
+                if TIME_OUT == True:
+                    break
+                if GPS_Target ==  TARGET_POINTS[i]:
+                    continue
+                else:
+                    x = (TARGET_POINTS[i][1]-500)*(100/1000)
+                    y = (-TARGET_POINTS[i][0]+500)*(100/1000)
+                    z = 0
+                    vrep.simxSetObjectPosition(clientID, target, -1, [x, y, z], vrep.simx_opmode_blocking)
+                    while True:
+                        if compareTargetAndGA() == True:
+                            break
+            COLLECTED_OBJECTS.append(closestObject)
+            vrep.simxAddStatusbarMessage(clientID,'Reached the object '+str(len(COLLECTED_OBJECTS))+'!!',vrep.simx_opmode_oneshot)
+            end_time = time()
+            print("Time for Reaching the object: ", end_time - start_moving_time)
+
+        if TIME_OUT == True or len(OBJECTS_LIST) == len(COLLECTED_OBJECTS):
+            CURRENT_OBJECT_LOCATION = [1, -49] #home base location
+            vrep.simxAddStatusbarMessage(clientID, 'Planning ... to go home base', vrep.simx_opmode_oneshot)
+            goalPoint = convertToPxlCoord(CURRENT_OBJECT_LOCATION)
+            astarPlanner = plnr.Planner(GPS_GroundAgent, goalPoint, "obs_map.png")  # obs_map.png
+            finalPath = astarPlanner.initiatePlanning()
+            if len(finalPath) == 0:
+                print("No path to home.")
+            for i in range(0, len(finalPath), 6):
+                if GPS_Target ==  finalPath[i]:
+                    continue
+                else:
+                    x = (finalPath[i][1]-500)*(100/1000)
+                    y = (-finalPath[i][0]+500)*(100/1000)
+                    z = 0
+                    vrep.simxSetObjectPosition(clientID, target, -1, [x, y, z], vrep.simx_opmode_blocking)
+                    while True:
+                        if compareTargetAndGA() == True:
+                            break
+            break #end the whole code
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
-    #vrep.simxGetPingTime(clientID)
+    vrep.simxGetPingTime(clientID)
 
     # Now close the connection to V-REP:
-    #vrep.simxFinish(clientID)
+    vrep.simxFinish(clientID)
 else:
     print ('Failed connecting to remote API server')
     sys.exit("Connection failed")
+print("Total time for execution "+str(time() - start_time))
 print ('Program ended')
 
 
