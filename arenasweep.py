@@ -101,9 +101,9 @@ def initiate(clientID):
         if (k > len(wpt) - 1):
             break
 
-        (ret, GV_handle) = vrep.simxGetObjectHandle(clientID, 'youBot', vrep.simx_opmode_oneshot)
-        (ret, GV_pos) = vrep.simxGetObjectPosition(clientID, GV_handle, -1, vrep.simx_opmode_oneshot)
-        GV_pos = np.asarray(GV_pos)
+        # (ret, GV_handle) = vrep.simxGetObjectHandle(clientID, 'youBot', vrep.simx_opmode_oneshot)
+        # (ret, GV_pos) = vrep.simxGetObjectPosition(clientID, GV_handle, -1, vrep.simx_opmode_oneshot)
+        # GV_pos = np.asarray(GV_pos)
 
         (ret, quad_handle) = vrep.simxGetObjectHandle(clientID, 'Quadricopter_base', vrep.simx_opmode_oneshot)
         (ret, target_handle) = vrep.simxGetObjectHandle(clientID, 'Quadricopter_target', vrep.simx_opmode_oneshot)
@@ -187,8 +187,10 @@ def initiate(clientID):
                     # # if (cam_start_x>0 and cam_start_y>0 and cam_end_x<1000 and cam_end_y<1000):
                     # obs_map[cam_start_y:cam_end_y,cam_start_x:cam_end_x] = cv2.resize(obs, (cam_len,cam_len), interpolation = cv2.INTER_AREA)
 
-                    u_GV = int(500 + GV_pos[0] * (1000 / 100))
-                    v_GV = int(500 - GV_pos[1] * (1000 / 100))
+                    # u_GV = int(500 + GV_pos[0] * (1000 / 100))
+                    # v_GV = int(500 - GV_pos[1] * (1000 / 100))
+                    u_GV = int(500 + 0 * (1000 / 100))
+                    v_GV = int(500 - (-49) * (1000 / 100))
                     print(u_GV)
                     print(v_GV)
                     cv2.circle(obs_map, (u_GV, v_GV), 20, 0, -1)

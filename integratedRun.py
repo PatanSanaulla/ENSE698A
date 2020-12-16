@@ -184,8 +184,8 @@ if clientID != -1:
             print(TARGET_POINTS)
             start_moving_time = time()  # Start of the whole code
             for i in range(0, len(TARGET_POINTS), 4):
-                if len(TARGET_POINTS)-i < 20 and AGENT_ORIENTED == False:
-                    orientGroundAgent()
+                # if len(TARGET_POINTS)-i < 20 and AGENT_ORIENTED == False:
+                #     orientGroundAgent()
                 if TIME_OUT == True:
                     break
                 if GPS_Target ==  TARGET_POINTS[i]:
@@ -198,7 +198,8 @@ if clientID != -1:
                     while True:
                         if compareTargetAndGA() == True:
                             break
-            COLLECTED_OBJECTS.append(TARGET_POINTS[len(TARGET_POINTS-1)])
+            COLLECTED_OBJECTS.append(closestObject)
+            sleep(3)
             vrep.simxAddStatusbarMessage(clientID,'Reached the object '+str(len(COLLECTED_OBJECTS))+'!!',vrep.simx_opmode_oneshot)
             end_time = time()
             print("Time for Reaching the object: ", end_time - start_moving_time)
