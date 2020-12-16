@@ -109,9 +109,9 @@ def InputOutputThread():
             #Read the obs_map.png file
             flag_obs_map_available = True
 
-            print("Thread Output")
-            print("Map is available and Objects Cluster is")
-            print(OBJS_clustered)
+            # print("Thread Output")
+            # print("Map is available and Objects Cluster is")
+            # print(OBJS_clustered)
         sleep(1)
 
 vrep.simxFinish(-1) # just in case, close all opened connections
@@ -175,7 +175,8 @@ if clientID != -1:
             closestObject = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
             TARGET_POINTS = ALL_PATHS[closestObject]
             closestObject = closestObject[1:len(closestObject) - 2]
-            CURRENT_OBJECT_LOCATION = [float(x.strip()) for x in closestObject.split(' ')]
+            print(closestObject)
+            CURRENT_OBJECT_LOCATION = [float(x.strip()) for x in closestObject.split()]
             AGENT_ORIENTED = False
 
             ALL_PATHS = dict()#clear all the path values for the next iteration
@@ -205,7 +206,7 @@ if clientID != -1:
             print("Time for Reaching the object: ", end_time - start_moving_time)
 
         if TIME_OUT == True or len(OBJS_clustered) == len(COLLECTED_OBJECTS) and len(OBJS_clustered) > 1:
-            CURRENT_OBJECT_LOCATION = [1, -49] #home base location
+            CURRENT_OBJECT_LOCATION = [0, -49] #home base location
             vrep.simxAddStatusbarMessage(clientID, 'Planning ... to go home base', vrep.simx_opmode_oneshot)
             goalPoint = convertToPxlCoord(CURRENT_OBJECT_LOCATION)
             astarPlanner = plnr.Planner(GPS_GroundAgent, goalPoint, "obs_map.png")  # obs_map.png
