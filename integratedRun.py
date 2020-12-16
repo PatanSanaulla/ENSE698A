@@ -41,6 +41,7 @@ def terminationThread():
     global TIME_OUT
     while True:
         total_time = time() - start_time
+        # if total_time > 600:  # 12 mins
         if total_time > 720: #12 mins
             TIME_OUT = True
             vrep.simxAddStatusbarMessage(clientID, 'Hurry up!!', vrep.simx_opmode_oneshot)
@@ -155,7 +156,7 @@ if clientID != -1:
     #flag_obs_map_available = True
 
     while True:
-        if (TIME_OUT == False) and (flag_obs_map_available == True) and len(OBJS_clustered) > 0:
+        if (TIME_OUT == False) and (flag_obs_map_available == True):
         # if len(OBJS_clustered) != len(COLLECTED_OBJECTS) and (TIME_OUT == False) and (flag_obs_map_available == True) and len(OBJS_clustered) > 0:
             for object in OBJS_clustered:
                 vrep.simxAddStatusbarMessage(clientID, 'Planning ... ', vrep.simx_opmode_oneshot)
@@ -205,7 +206,8 @@ if clientID != -1:
             end_time = time()
             print("Time for Reaching the object: ", end_time - start_moving_time)
 
-        if TIME_OUT == True or len(OBJS_clustered) == len(COLLECTED_OBJECTS) and len(OBJS_clustered) > 1:
+        # if TIME_OUT == True or len(OBJS_clustered) == len(COLLECTED_OBJECTS) and len(OBJS_clustered) > 1:
+        if TIME_OUT == True:
             CURRENT_OBJECT_LOCATION = [0, -49] #home base location
             vrep.simxAddStatusbarMessage(clientID, 'Planning ... to go home base', vrep.simx_opmode_oneshot)
             goalPoint = convertToPxlCoord(CURRENT_OBJECT_LOCATION)

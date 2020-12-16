@@ -17,7 +17,7 @@ fov = 45
 h = 15
 acceptance_radius = 1
 V = .1
-
+f = 500.0 / np.tan(0.5 * fov * (np.pi / 180.0))
 
 def clustering(c):
     c = c.reshape((-1, 2))
@@ -199,7 +199,7 @@ def initiate(clientID):
                     kernel = np.ones((1, 1), np.uint8)
                     obs_map = cv2.erode(obs_map, kernel, iterations=1)
                     kernel = np.ones((5, 5), np.uint8)
-                    obs_map = cv2.dilate(obs_map, kernel, iterations=2)
+                    obs_map = cv2.dilate(obs_map, kernel, iterations=3)
 
                     cv2.imwrite('obs_map.png', obs_map)
 
@@ -256,12 +256,12 @@ def initiate(clientID):
 
                 objs = cv2.bitwise_or(objs, frame, mask=None)
 
-                # # obstacle 4 (Green)
-                # lower = (0, 200, 0)  # lower threshhold values
-                # upper = (50, 255, 50)  # upper threshhold values
-                # frame = cv2.inRange(raw_img, lower, upper)
-                #
-                # objs = cv2.bitwise_or(objs, frame, mask=None)
+                # obstacle 4 (Green)
+                lower = (0, 200, 0)  # lower threshhold values
+                upper = (50, 255, 50)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
 
                 # # obstacle 5 (Blue)
                 # lower = (0, 0, 200)  # lower threshhold values
@@ -270,12 +270,12 @@ def initiate(clientID):
                 #
                 # objs = cv2.bitwise_or(objs, frame, mask=None)
 
-                # # obstacle 5 (Yellow)
-                # lower = (220, 230, 160)  # lower threshhold values
-                # upper = (230, 250, 170)  # upper threshhold values
-                # frame = cv2.inRange(raw_img, lower, upper)
-                #
-                # objs = cv2.bitwise_or(objs, frame, mask=None)
+                # obstacle 5 (Yellow)
+                lower = (220, 230, 160)  # lower threshhold values
+                upper = (230, 250, 170)  # upper threshhold values
+                frame = cv2.inRange(raw_img, lower, upper)
+
+                objs = cv2.bitwise_or(objs, frame, mask=None)
 
                 # obstacle 5 (Bronze)
                 lower = (220, 160, 150)  # lower threshhold values
@@ -300,18 +300,16 @@ def initiate(clientID):
                             cX = int(M["m10"] / M["m00"])
                             cY = int(M["m01"] / M["m00"])
                             if (cX > 50 and cX < 1000 - 50 and cY > 30 and cY < 1000 - 30):
-                                cv2.circle(raw_img, (cX, cY), 30, (255, 0, 0), 5)
-                                f = 500.0 / np.tan(0.5 * fov * (np.pi / 180.0))
+                                # cv2.circle(raw_img, (cX, cY), 30, (255, 0, 0), 5)
                                 x_pos = ((cX - 500.0) / f) * (pos[2] - 0.1) + pos[0]
-                                if (wpt[k][1] > 0):
-                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1]
-                                    # y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] + 1.4 + 0.37
-                                else:
-                                    y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1]
-                                    # y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] - 1.4 - 0.27
+                                y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1]
+                                # if (wpt[k][1] > 0):
+                                #     y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] + 1.4 + 0.37
+                                # else:
+                                #     y_pos = (-(cY - 500.0) / f) * (pos[2] - 0.1) + pos[1] - 1.4 - 0.27
                                 # print(x_pos, y_pos)
-                                OBJS_X = np.append(OBJS_X, x_pos)
-                                OBJS_Y = np.append(OBJS_Y, y_pos)
+                                # OBJS_X = np.append(OBJS_X, x_pos)
+                                # OBJS_Y = np.append(OBJS_Y, y_pos)
                                 # print(OBJS_X,OBJS_Y)
                                 # print(len(OBJS_X))
                                 # OBJS = np.asarray([OBJS_X,OBJS_Y])
