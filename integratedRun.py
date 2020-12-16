@@ -143,11 +143,11 @@ if clientID != -1:
     thread2 = Thread(target=getGroundAgentPosition)
     thread2.start()
     #Threaded Function to call the Aerial Agent Sweep
-    #thread3 = Thread(target=AerialAgentNavigationThread)
-    #thread3.start()
+    thread3 = Thread(target=AerialAgentNavigationThread)
+    thread3.start()
     #Threaded Function to save the input output thread
-    #thread4 = Thread(target=InputOutputThread)
-    #thread4.start()
+    thread4 = Thread(target=InputOutputThread)
+    thread4.start()
     #Thread to maintain the time
     thread5 = Thread(target=terminationThread)
     thread5.start()
@@ -183,8 +183,8 @@ if clientID != -1:
             print(TARGET_POINTS)
             start_moving_time = time()  # Start of the whole code
             for i in range(0, len(TARGET_POINTS), 4):
-                if len(TARGET_POINTS)-i < 20 and AGENT_ORIENTED == False:
-                    orientGroundAgent()
+                # if len(TARGET_POINTS)-i < 20 and AGENT_ORIENTED == False:
+                #     orientGroundAgent()
                 if TIME_OUT == True:
                     break
                 if GPS_Target ==  TARGET_POINTS[i]:
@@ -198,6 +198,7 @@ if clientID != -1:
                         if compareTargetAndGA() == True:
                             break
             COLLECTED_OBJECTS.append(closestObject)
+            sleep(3)
             vrep.simxAddStatusbarMessage(clientID,'Reached the object '+str(len(COLLECTED_OBJECTS))+'!!',vrep.simx_opmode_oneshot)
             end_time = time()
             print("Time for Reaching the object: ", end_time - start_moving_time)
