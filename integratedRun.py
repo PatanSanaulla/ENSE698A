@@ -22,14 +22,14 @@ GPS_Target = []
 GPS_GroundAgent = []
 ALL_PATHS = dict()
 TARGET_POINTS = []
-OBJECTS_LIST = ["-4.301942795144567100e+01 1.668216601234799512e+01", "-3.903965686868058071e+01 3.878300354844295139e+00", "-3.596882883644629914e+01 -1.925359988963654345e+01",
-                "-2.779374694923166089e+01 -6.786084238198500707e+00", "-3.571816138295204723e+01 3.494265815045015700e+01", "-3.274305282709623555e+01 3.527596906749624139e+01",
-                "-3.273008800231556847e+01 3.526363670854166088e+01", "-2.280438795227334836e+01 3.061318893123140938e+01", "-1.766011883552472739e+01 1.485091621136611373e+01",
-                "-1.745021714791523948e+01 1.572756443608808574e+01", "-1.762746734797226367e+01 1.500315160025669137e+01", "-1.365122833879108200e+01 3.194807128906250071e+00",
-                "-2.128056850333196692e+01 3.194807128906250071e+00", "-1.416444155733705657e+01 -3.831263618950078165e+00", "-1.416795748296407353e+01 -3.996696249250648592e+00",
-                "-8.889802254166550455e+00 -1.646985904062735173e+01", "-8.863012412951995600e+00 -1.660381190694694098e+01", "-7.915420401983931598e+00 3.168938626365390832e+01",
-                "7.011463087285690676e+00 2.103207979694845520e+01", "2.388495074492705594e+00 3.929433142321048233e+00", "1.299595617362090572e+01 -2.783283076362472030e+01",
-                "3.085184920661876973e+01 -3.675865612396758131e-01", "3.019226145403777650e+01 -2.287676242565955675e+01", "3.020265316122621613e+01 -2.287676800407635014e+01"]
+# OBJECTS_LIST = ["-4.301942795144567100e+01 1.668216601234799512e+01", "-3.903965686868058071e+01 3.878300354844295139e+00", "-3.596882883644629914e+01 -1.925359988963654345e+01",
+#                 "-2.779374694923166089e+01 -6.786084238198500707e+00", "-3.571816138295204723e+01 3.494265815045015700e+01", "-3.274305282709623555e+01 3.527596906749624139e+01",
+#                 "-3.273008800231556847e+01 3.526363670854166088e+01", "-2.280438795227334836e+01 3.061318893123140938e+01", "-1.766011883552472739e+01 1.485091621136611373e+01",
+#                 "-1.745021714791523948e+01 1.572756443608808574e+01", "-1.762746734797226367e+01 1.500315160025669137e+01", "-1.365122833879108200e+01 3.194807128906250071e+00",
+#                 "-2.128056850333196692e+01 3.194807128906250071e+00", "-1.416444155733705657e+01 -3.831263618950078165e+00", "-1.416795748296407353e+01 -3.996696249250648592e+00",
+#                 "-8.889802254166550455e+00 -1.646985904062735173e+01", "-8.863012412951995600e+00 -1.660381190694694098e+01", "-7.915420401983931598e+00 3.168938626365390832e+01",
+#                 "7.011463087285690676e+00 2.103207979694845520e+01", "2.388495074492705594e+00 3.929433142321048233e+00", "1.299595617362090572e+01 -2.783283076362472030e+01",
+#                 "3.085184920661876973e+01 -3.675865612396758131e-01", "3.019226145403777650e+01 -2.287676242565955675e+01", "3.020265316122621613e+01 -2.287676800407635014e+01"]
 OBJS_clustered = []
 COLLECTED_OBJECTS = []
 CURRENT_OBJECT_LOCATION = []
@@ -143,38 +143,39 @@ if clientID != -1:
     thread2 = Thread(target=getGroundAgentPosition)
     thread2.start()
     #Threaded Function to call the Aerial Agent Sweep
-    #thread3 = Thread(target=AerialAgentNavigationThread)
-    #thread3.start()
+    thread3 = Thread(target=AerialAgentNavigationThread)
+    thread3.start()
     #Threaded Function to save the input output thread
-    #thread4 = Thread(target=InputOutputThread)
-    #thread4.start()
+    thread4 = Thread(target=InputOutputThread)
+    thread4.start()
     #Thread to maintain the time
     thread5 = Thread(target=terminationThread)
     thread5.start()
 
-    flag_obs_map_available = True
+    #flag_obs_map_available = True
 
     while True:
-        if len(OBJECTS_LIST) != len(COLLECTED_OBJECTS) and (TIME_OUT == False) and (flag_obs_map_available == True):
-            for object in OBJECTS_LIST:
+        if len(OBJS_clustered) != len(COLLECTED_OBJECTS) and (TIME_OUT == False) and (flag_obs_map_available == True) and len(OBJS_clustered) > 0:
+            for object in OBJS_clustered:
                 vrep.simxAddStatusbarMessage(clientID, 'Planning ... ', vrep.simx_opmode_oneshot)
                 startPoint = GPS_GroundAgent
-                if object in COLLECTED_OBJECTS:
+                coordinates = [float(x) for x in object]
+                goalPoint = convertToPxlCoord(coordinates)
+                if goalPoint in COLLECTED_OBJECTS:
                     continue
                 else:
-                    coordinates = [float(x) for x in object.split(" ")]
-                    goalPoint = convertToPxlCoord(coordinates)
                     astarPlanner = plnr.Planner(startPoint, goalPoint, "obs_map.png") #obs_map.png
                     path = astarPlanner.initiatePlanning()
                     if len(path) == 0:
                         break
-                    ALL_PATHS[object] = path
+                    ALL_PATHS[str(object)] = path
                     del astarPlanner
             if len(ALL_PATHS) == 0:
                 continue
             closestObject = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
             TARGET_POINTS = ALL_PATHS[closestObject]
-            CURRENT_OBJECT_LOCATION = [float(x) for x in object.split(" ")]
+            closestObject = closestObject[1:len(closestObject) - 2]
+            CURRENT_OBJECT_LOCATION = [float(x.strip()) for x in closestObject.split(' ')]
             AGENT_ORIENTED = False
 
             ALL_PATHS = dict()#clear all the path values for the next iteration
@@ -197,12 +198,12 @@ if clientID != -1:
                     while True:
                         if compareTargetAndGA() == True:
                             break
-            COLLECTED_OBJECTS.append(closestObject)
+            COLLECTED_OBJECTS.append(TARGET_POINTS[len(TARGET_POINTS-1)])
             vrep.simxAddStatusbarMessage(clientID,'Reached the object '+str(len(COLLECTED_OBJECTS))+'!!',vrep.simx_opmode_oneshot)
             end_time = time()
             print("Time for Reaching the object: ", end_time - start_moving_time)
 
-        if TIME_OUT == True or len(OBJECTS_LIST) == len(COLLECTED_OBJECTS):
+        if TIME_OUT == True or len(OBJS_clustered) == len(COLLECTED_OBJECTS) and len(OBJS_clustered) > 1:
             CURRENT_OBJECT_LOCATION = [1, -49] #home base location
             vrep.simxAddStatusbarMessage(clientID, 'Planning ... to go home base', vrep.simx_opmode_oneshot)
             goalPoint = convertToPxlCoord(CURRENT_OBJECT_LOCATION)
@@ -222,6 +223,7 @@ if clientID != -1:
                         if compareTargetAndGA() == True:
                             break
             break #end the whole code
+
     # Before closing the connection to V-REP, make sure that the last command sent out had time to arrive. You can guarantee this with (for example):
     vrep.simxGetPingTime(clientID)
 
