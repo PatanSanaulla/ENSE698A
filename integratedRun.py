@@ -112,7 +112,7 @@ def InputOutputThread():
             # print("Thread Output")
             # print("Map is available and Objects Cluster is")
             # print(OBJS_clustered)
-        sleep(1)
+        sleep(2)
 
 vrep.simxFinish(-1) # just in case, close all opened connections
 clientID = vrep.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to V-REP
@@ -155,7 +155,8 @@ if clientID != -1:
     #flag_obs_map_available = True
 
     while True:
-        if len(OBJS_clustered) != len(COLLECTED_OBJECTS) and (TIME_OUT == False) and (flag_obs_map_available == True) and len(OBJS_clustered) > 0:
+        if (TIME_OUT == False) and (flag_obs_map_available == True) and len(OBJS_clustered) > 0:
+        # if len(OBJS_clustered) != len(COLLECTED_OBJECTS) and (TIME_OUT == False) and (flag_obs_map_available == True) and len(OBJS_clustered) > 0:
             for object in OBJS_clustered:
                 vrep.simxAddStatusbarMessage(clientID, 'Planning ... ', vrep.simx_opmode_oneshot)
                 startPoint = GPS_GroundAgent
@@ -175,7 +176,6 @@ if clientID != -1:
             closestObject = min(ALL_PATHS.keys(), key=(lambda k: len(ALL_PATHS[k])))
             TARGET_POINTS = ALL_PATHS[closestObject]
             closestObject = closestObject[1:len(closestObject) - 2]
-            print(closestObject)
             CURRENT_OBJECT_LOCATION = [float(x.strip()) for x in closestObject.split()]
             AGENT_ORIENTED = False
 
@@ -199,7 +199,7 @@ if clientID != -1:
                     while True:
                         if compareTargetAndGA() == True:
                             break
-            COLLECTED_OBJECTS.append(closestObject)
+            COLLECTED_OBJECTS.append(TARGET_POINTS[len(TARGET_POINTS)-1])
             sleep(3)
             vrep.simxAddStatusbarMessage(clientID,'Reached the object '+str(len(COLLECTED_OBJECTS))+'!!',vrep.simx_opmode_oneshot)
             end_time = time()

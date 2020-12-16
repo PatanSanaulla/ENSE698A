@@ -86,7 +86,7 @@ def initiate(clientID):
         i_cov = i_cov + 1
 
     wpt[k] = (start[0], start[1], h)
-    wpt[k + 1] = (start[0], start[1], 0)
+    wpt[k + 1] = (start[0], start[1], 2)
 
     # print(N_cov)
     # print(len(wpt))
@@ -242,12 +242,12 @@ def initiate(clientID):
 
                 objs = cv2.bitwise_or(objs, frame, mask=None)
 
-                # obstacle 3 (Red)
-                lower = (200, 0, 0)  # lower threshhold values
-                upper = (255, 50, 50)  # upper threshhold values
-                frame = cv2.inRange(raw_img, lower, upper)
-
-                objs = cv2.bitwise_or(objs, frame, mask=None)
+                # # obstacle 3 (Red)
+                # lower = (200, 0, 0)  # lower threshhold values
+                # upper = (255, 50, 50)  # upper threshhold values
+                # frame = cv2.inRange(raw_img, lower, upper)
+                #
+                # objs = cv2.bitwise_or(objs, frame, mask=None)
 
                 # obstacle 3 (Pink)
                 lower = (200, 100, 250)  # lower threshhold values
@@ -256,26 +256,26 @@ def initiate(clientID):
 
                 objs = cv2.bitwise_or(objs, frame, mask=None)
 
-                # obstacle 4 (Green)
-                lower = (0, 200, 0)  # lower threshhold values
-                upper = (50, 255, 50)  # upper threshhold values
-                frame = cv2.inRange(raw_img, lower, upper)
+                # # obstacle 4 (Green)
+                # lower = (0, 200, 0)  # lower threshhold values
+                # upper = (50, 255, 50)  # upper threshhold values
+                # frame = cv2.inRange(raw_img, lower, upper)
+                #
+                # objs = cv2.bitwise_or(objs, frame, mask=None)
 
-                objs = cv2.bitwise_or(objs, frame, mask=None)
+                # # obstacle 5 (Blue)
+                # lower = (0, 0, 200)  # lower threshhold values
+                # upper = (50, 50, 255)  # upper threshhold values
+                # frame = cv2.inRange(raw_img, lower, upper)
+                #
+                # objs = cv2.bitwise_or(objs, frame, mask=None)
 
-                # obstacle 5 (Blue)
-                lower = (0, 0, 200)  # lower threshhold values
-                upper = (50, 50, 255)  # upper threshhold values
-                frame = cv2.inRange(raw_img, lower, upper)
-
-                objs = cv2.bitwise_or(objs, frame, mask=None)
-
-                # obstacle 5 (Yellow)
-                lower = (220, 230, 160)  # lower threshhold values
-                upper = (230, 250, 170)  # upper threshhold values
-                frame = cv2.inRange(raw_img, lower, upper)
-
-                objs = cv2.bitwise_or(objs, frame, mask=None)
+                # # obstacle 5 (Yellow)
+                # lower = (220, 230, 160)  # lower threshhold values
+                # upper = (230, 250, 170)  # upper threshhold values
+                # frame = cv2.inRange(raw_img, lower, upper)
+                #
+                # objs = cv2.bitwise_or(objs, frame, mask=None)
 
                 # obstacle 5 (Bronze)
                 lower = (220, 160, 150)  # lower threshhold values
